@@ -1,0 +1,24 @@
+{% extends 'main_template.html' %}
+
+{% block style %}<link rel="stylesheet" href="static/css/select_topic.css">{% endblock %}
+
+{% block title %}Оберіть тему{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <form method="post" action="{{ url_for('new_test') }}">
+        <p>Оберiть тему тестування</p>
+        <select name="select_topic">
+            {% for value in table_list%}
+            <option value="{{ value }}">{{ value }}</option>
+            {%- endfor %}
+        </select>
+        <p>або створiть нову</p>
+        <input id="new_topic" type="button" value="Створити" onclick="create_new_topic();">
+        <input type="submit" value="Далi">
+        <input name="topic" type="hidden">
+    </form>
+</div>
+{% endblock %}
+
+{% block javascript %}<script src="/static/js/select_topic.js"></script>{% endblock %}

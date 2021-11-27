@@ -1,0 +1,22 @@
+{% extends 'main_template.html' %}
+
+{% block title %}Новий тест{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('save_test') }}" method="post">
+    <p>Ви створюэте запитання до теми {{ current_topic }}</p>
+    <input type="hidden" name="topic_test" value="{{ current_topic }}" >
+    <p>Запитання 1</p>
+    <input name="question_1" type="text">
+    <p>Вiдповiдь</p>
+    <p><input name="answer_1_1" type="text"><input type="checkbox"></p>
+    <p><input name="answer_1_2" type="text"><input type="checkbox"></p>
+    <p><input name="answer_1_3" type="text"><input type="checkbox"></p>
+    <input id="total_answers_1" name="total_answers_1" type="hidden" value="3">
+    <input id="1" type="button" value="Додати вiдповiдь" onclick="add_answer(id=1);">
+    <p><input value="Додати запитання" onclick="create_question_form();" id="new_question" type="button"></p>
+    <p><input id="submit_button" type="submit" value="Зберегти"></p>
+</form>
+{% endblock %}
+
+{% block javascript %}<script src="/static/js/create_test.js"></script>{% endblock %}
