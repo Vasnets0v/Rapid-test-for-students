@@ -1,9 +1,19 @@
 from flask import Flask, render_template, request, redirect
 import sys
 import sqlite3
+import os
 
 app = Flask(__name__)
-db = sqlite3.connect('database.s3db', check_same_thread=False)
+if os.path.exists("databases"):
+    pass
+else:
+    os.mkdir("databases")
+
+if os.path.exists("databases/img"):
+    pass
+else:
+    os.mkdir("databases/img")
+db = sqlite3.connect('databases/main_db.s3db', check_same_thread=False)
 sql_request = db.cursor()
 
 
@@ -11,14 +21,14 @@ def create_new_table(new_topic):
     sql_request.execute(f"""
     CREATE TABLE IF NOT EXISTS {new_topic} (
         id integer PRIMARY KEY AUTOINCREMENT,
-        question varchar,
-        answer_1 varchar,
-        answer_2 varchar,
-        answer_3 varchar,
-        answer_4 varchar,
-        answer_5 varchar,
-        answer_6 varchar,
-        right_answer integer
+        question varchar(255),
+        answer_1 varchar(255),
+        answer_2 varchar(255),
+        answer_3 varchar(255),
+        answer_4 varchar(255),
+        answer_5 varchar(255),
+        answer_6 varchar(255),
+        right_answer varchar(255)
         );""")
 
 
@@ -38,7 +48,34 @@ def select_topic():
 
 @app.route('/save_new_test', methods=['POST', 'GET'])
 def save_test():
-    print(request.form['total_answers_1'])
+
+    topic = request.form['topic_test']
+    total_questions = int(request.form['total_questions'])
+
+    for i in range(total_questions):
+        question_id = i + 1
+        question = request.form[f'question_{question_id}']
+
+        if question == "":
+            continue
+
+        answers = []
+
+        total_answers = int(request.form[f'total_answers_{question_id}'])
+
+        for j in range(total_answers):
+            answers_id = j + 1
+
+            answers.append(request.form[f'answer_{question_id}_{answers_id}'])
+
+        for _ in range(6 - total_questions):
+            answers.append('zero')
+
+        sql_request.execute(f'INSERT INTO {topic} (question, answer_1, answer_2, answer_3, answer_4, answer_5, '
+                            f'answer_6, right_answer) VALUES ("{question}", "{answers[0]}", "{answers[1]}", '
+                            f'"{answers[2]}", "{answers[3]}", "{answers[4]}", "{answers[5]}", "0")')
+        db.commit()
+
     return redirect('/')
 
 
