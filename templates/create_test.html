@@ -7,11 +7,11 @@
     <p>Ви створюэте запитання до теми {{ current_topic }}</p>
     <input type="hidden" name="topic_test" value="{{ current_topic }}" >
     <p>Запитання 1</p>
-    <input name="question_1" type="text">
+    <input name="question_1" type="text" required>
     <p>Вiдповiдь</p>
-    <p><input name="answer_1_1" type="text"><input type="checkbox"></p>
-    <p><input name="answer_1_2" type="text"><input type="checkbox"></p>
-    <p><input name="answer_1_3" type="text"><input type="checkbox"></p>
+    <p><input name="answer_1_1" type="text" required><input name="checkbox_1_1" type="checkbox"></p>
+    <p><input name="answer_1_2" type="text" required><input name="checkbox_1_2" type="checkbox"></p>
+    <p><input name="answer_1_3" type="text" required><input name="checkbox_1_3" type="checkbox"></p>
     <input id="total_answers_1" name="total_answers_1" type="hidden" value="3">
     <input type="hidden" name="total_questions" id="total_questions" value="1">
     <input id="1" type="button" value="Додати вiдповiдь" onclick="add_answer(id=1);">

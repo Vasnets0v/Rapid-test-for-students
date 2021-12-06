@@ -56,10 +56,8 @@ def save_test():
         question_id = i + 1
         question = request.form[f'question_{question_id}']
 
-        if question == "":
-            continue
-
         answers = []
+        correct_answer = '0 '
 
         total_answers = int(request.form[f'total_answers_{question_id}'])
 
@@ -68,12 +66,18 @@ def save_test():
 
             answers.append(request.form[f'answer_{question_id}_{answers_id}'])
 
-        for _ in range(6 - total_questions):
+            try:
+                temp_trash = request.form[f'checkbox_{question_id}_{answers_id}']
+                correct_answer += f"{answers_id}" + " "
+            except Exception:
+                pass
+
+        for _ in range(6 - total_answers):
             answers.append('zero')
 
         sql_request.execute(f'INSERT INTO {topic} (question, answer_1, answer_2, answer_3, answer_4, answer_5, '
                             f'answer_6, right_answer) VALUES ("{question}", "{answers[0]}", "{answers[1]}", '
-                            f'"{answers[2]}", "{answers[3]}", "{answers[4]}", "{answers[5]}", "0")')
+                            f'"{answers[2]}", "{answers[3]}", "{answers[4]}", "{answers[5]}", "{correct_answer}")')
         db.commit()
 
     return redirect('/')
