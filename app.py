@@ -2,8 +2,10 @@ from flask import Flask, render_template, request, redirect
 import sys
 import sqlite3
 import os
+import time
 
 app = Flask(__name__)
+
 if os.path.exists("databases"):
     pass
 else:
@@ -13,6 +15,11 @@ if os.path.exists("databases/img"):
     pass
 else:
     os.mkdir("databases/img")
+
+main_app_path = os.path.dirname(os.path.abspath(__file__))
+databases_path = main_app_path + '\databases\img'
+app.config["IMAGE_UPLOADS"] = databases_path
+
 db = sqlite3.connect('databases/main_db.s3db', check_same_thread=False)
 sql_request = db.cursor()
 
@@ -28,6 +35,12 @@ def create_new_table(new_topic):
         answer_4 varchar(255),
         answer_5 varchar(255),
         answer_6 varchar(255),
+        img_1 varchar(255),
+        img_2 varchar(255),
+        img_3 varchar(255),
+        img_4 varchar(255),
+        img_5 varchar(255),
+        img_6 varchar(255),
         right_answer varchar(255)
         );""")
 
@@ -58,26 +71,48 @@ def save_test():
 
         answers = []
         correct_answer = '0 '
+        img_answers = []
 
         total_answers = int(request.form[f'total_answers_{question_id}'])
 
         for j in range(total_answers):
-            answers_id = j + 1
+            num = j + 1
 
-            answers.append(request.form[f'answer_{question_id}_{answers_id}'])
+            temp_answer = request.form[f'answer_{question_id}_{num}']
+
+            if temp_answer == '':
+                answers.append('NULL')
+            else:
+                answers.append(temp_answer)
+
+            img = request.files[f'image_{question_id}_{num}']
+            if img:
+                current_time = str(time.time())
+                img_name = current_time.split('.')
+                old_img_name = img.filename.split('.')
+                img.filename = img_name[0] + img_name[1] + "." + old_img_name[1]
+
+                img.save(os.path.join(app.config["IMAGE_UPLOADS"], img.filename))
+                img_answers.append(img.filename)
+            else:
+                img_answers.append('NULL')
 
             try:
-                temp_trash = request.form[f'checkbox_{question_id}_{answers_id}']
-                correct_answer += f"{answers_id}" + " "
+                temp_trash = request.form[f'checkbox_{question_id}_{num}']
+                correct_answer += f"{num}" + " "
             except Exception:
                 pass
 
         for _ in range(6 - total_answers):
-            answers.append('zero')
+            answers.append('NULL')
+            img_answers.append('NULL')
 
         sql_request.execute(f'INSERT INTO {topic} (question, answer_1, answer_2, answer_3, answer_4, answer_5, '
-                            f'answer_6, right_answer) VALUES ("{question}", "{answers[0]}", "{answers[1]}", '
-                            f'"{answers[2]}", "{answers[3]}", "{answers[4]}", "{answers[5]}", "{correct_answer}")')
+                            f'answer_6, right_answer, img_1, img_2, img_3, img_4, img_5, img_6) '
+                            f'VALUES ("{question}", "{answers[0]}", "{answers[1]}", "{answers[2]}", "{answers[3]}", '
+                            f'"{answers[4]}", "{answers[5]}", "{correct_answer}", "{img_answers[0]}", '
+                            f'"{img_answers[1]}", "{img_answers[2]}", "{img_answers[3]}", "{img_answers[4]}"'
+                            f', "{img_answers[5]}")')
         db.commit()
 
     return redirect('/')
