@@ -1,0 +1,28 @@
+* {
+ padding-top: 3px;
+ padding-bottom: 3px
+}
+
+.custom_container{
+  width: 100%;
+  padding-right: 300px;
+  padding-left: 300px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.highlight_text {
+ color: orange;
+}
+
+h5 {
+text-align: center;
+}
+
+h3 {
+text-align: center;
+}
+
+.button_centre {
+text-align: center;
+}

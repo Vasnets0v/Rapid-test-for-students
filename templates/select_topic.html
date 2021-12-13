@@ -8,14 +8,14 @@
 <div class="wrapper">
     <form method="post" action="{{ url_for('new_test') }}">
         <p>Оберiть тему тестування</p>
-        <select name="select_topic">
+        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="select_topic">
             {% for value in table_list%}
             <option value="{{ value }}">{{ value }}</option>
             {%- endfor %}
         </select>
         <p>або створiть нову</p>
-        <input id="new_topic" type="button" value="Створити" onclick="create_new_topic();">
-        <input type="submit" value="Далi">
+        <input id="new_topic" type="button" class="btn btn-secondary" value="Створити" onclick="create_new_topic();">
+        <input type="submit" class="btn btn-primary" value="Далi">
         <input name="topic" type="hidden">
     </form>
 </div>

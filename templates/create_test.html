@@ -1,35 +1,40 @@
 {% extends 'main_template.html' %}
 
+{% block style %}<link rel="stylesheet" href="static/css/create_test.css">{% endblock %}
+
 {% block title %}Новий тест{% endblock %}
 
 {% block content %}
-<form action="{{ url_for('save_test') }}" method="post" enctype="multipart/form-data">
-    <p>Ви створюэте запитання до теми {{ current_topic }}</p>
-    <input type="hidden" name="topic_test" value="{{ current_topic }}" >
-    <p>Запитання 1</p>
-    <input name="question_1" type="text" required>
-    <p>Вiдповiдь</p>
-    <p>
-        <input name="answer_1_1" type="text">
-        <input type="file" id="image_1_1" name="image_1_1" accept=".jpg, .jpeg, .png">
-        <input name="checkbox_1_1" type="checkbox">
-    </p>
-    <p>
-        <input name="answer_1_2" type="text">
-        <input type="file" id="image_1_2" name="image_1_2" accept=".jpg, .jpeg, .png">
-        <input name="checkbox_1_2" type="checkbox">
-    </p>
-    <p>
-        <input name="answer_1_3" type="text">
-        <input type="file" id="image_1_3" name="image_1_3" accept=".jpg, .jpeg, .png">
-        <input name="checkbox_1_3" type="checkbox">
-    </p>
-    <input type="hidden" id="total_answers_1" name="total_answers_1" value="3">
-    <input type="hidden" id="total_questions" name="total_questions" value="1">
-    <input type="button" id="1" value="Додати вiдповiдь" onclick="add_answer(id=1);">
-    <p><input type="button" id="new_question" value="Додати запитання" onclick="create_question_form();"></p>
-    <p><input type="submit" id="submit_button" value="Зберегти"></p>
-</form>
+<div class="custom_container">
+    <form action="{{ url_for('save_test') }}" method="post" enctype="multipart/form-data">
+        <h3>Ви створюєте запитання до теми {{ current_topic }}</h3>
+        <input type="hidden" name="topic_test" value="{{ current_topic }}" >
+        <h5>Запитання №1</h5>
+        <input name="question_1" type="text" required class="form-control">
+        <h5>Відповіді</h5>
+        <div class="row align-items-center">
+            <div class="col-sm-7"><input name="answer_1_1" type="text" class="form-control"></div>
+            <div class="col-sm-4"><input type="file" id="image_1_1" name="image_1_1" accept=".jpg, .jpeg, .png" class="form-control"></div>
+            <div class="col-sm-1"><input name="checkbox_1_1" type="checkbox" class="form-check-input mt-0"></div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-sm-7"><input name="answer_1_2" type="text" class="form-control"></div>
+            <div class="col-sm-4"><input type="file" id="image_1_2" name="image_1_2" accept=".jpg, .jpeg, .png" class="form-control"></div>
+            <div class="col-sm-1"><input name="checkbox_1_2" type="checkbox" class="form-check-input mt-0"></div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-sm-7"><input name="answer_1_3" type="text" class="form-control"></div>
+            <div class="col-sm-4"><input type="file" id="image_1_3" name="image_1_3" accept=".jpg, .jpeg, .png" class="form-control"></div>
+            <div class="col-sm-1"><input name="checkbox_1_3" type="checkbox" class="form-check-input mt-0"></div>
+        </div>
+        <div class="button_centre" id="1"><input type="button" value="Додати вiдповiдь" onclick="add_answer(id=1);" class="btn btn-success"></div>
+        <hr class="my-4">
+        <div class="button_centre" id="new_question"><input type="button" value="Додати запитання" onclick="create_question_form();" class="btn btn-secondary"></div>
+        <div class="button_centre"><input type="submit" id="submit_button" value="Зберегти" class="btn btn-primary"></div>
+        <input type="hidden" id="total_answers_1" name="total_answers_1" value="3">
+        <input type="hidden" id="total_questions" name="total_questions" value="1">
+    </form>
+</div>
 {% endblock %}
 
 {% block javascript %}<script src="/static/js/create_test.js"></script>{% endblock %}
