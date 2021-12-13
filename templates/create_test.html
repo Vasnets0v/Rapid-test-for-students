@@ -7,7 +7,7 @@
 {% block content %}
 <div class="custom_container">
     <form action="{{ url_for('save_test') }}" method="post" enctype="multipart/form-data">
-        <h3>Ви створюєте запитання до теми {{ current_topic }}</h3>
+        <div class="chosen_topic">Ви створюєте запитання до теми <div class="highlight_text">{{ current_topic }}</div></div>
         <input type="hidden" name="topic_test" value="{{ current_topic }}" >
         <h5>Запитання №1</h5>
         <input name="question_1" type="text" required class="form-control">

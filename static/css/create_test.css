@@ -13,6 +13,7 @@
 
 .highlight_text {
  color: orange;
+ display: inline;
 }
 
 h5 {
@@ -24,5 +25,11 @@ text-align: center;
 }
 
 .button_centre {
+text-align: center;
+}
+
+.chosen_topic {
+font-size: 28px;
+font-weight: bold;
 text-align: center;
 }

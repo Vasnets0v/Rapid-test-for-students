@@ -2,10 +2,28 @@ body {
 background-image: url(../img/doodles.png);
 }
 
-.wrapper {
-    background-color: white;
-    width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 200px;
+.custom_container{
+  width: 100%;
+  padding-right: 500px;
+  padding-left: 500px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.text {
+font-size: 22px;
+font-weight: bold;
+text-align: center;
+}
+
+.text_top {
+padding-top: 200px;
+font-size: 22px;
+font-weight: bold;
+text-align: center;
+}
+
+.buttons {
+padding-top: 10px;
+text-align: center;
 }
