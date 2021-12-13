@@ -1,8 +1,16 @@
 {% extends 'main_template.html' %}
 
+{% block style %}<link rel="stylesheet" href="static/css/index.css">{% endblock %}
+
 {% block title %}Головна{% endblock %}
 
 {% block content %}
-<p><a href="/select_topic">Створити тест</a></p>
-<p><a href="/">Пройти тест</a></p>
+<div class="custom_container">
+    <form action="/select_topic">
+    <input style="margin-bottom: 10px;" class="btn btn-info" type="submit" value="Створити тест">
+</form>
+<form action="/">
+    <input class="btn btn-danger" type="submit" value="Пройти тест">
+</form>
+</div>
 {% endblock %}
