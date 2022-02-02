@@ -10,7 +10,10 @@
         <div class="chosen_topic">Ви створюєте запитання до теми <div class="highlight_text">{{ current_topic }}</div></div>
         <input type="hidden" name="topic_test" value="{{ current_topic }}" >
         <h5>Запитання №1</h5>
-        <input name="question_1" type="text" required class="form-control">
+        <div class="row align-items-center">
+            <div class="col-sm-7"><input name="question_1" type="text" required class="form-control"></div>
+            <div class="col-sm-5"><input type="file" id="q_image_1" name="q_image_1" accept=".jpg, .jpeg, .png" class="form-control"></div>
+        </div>
         <h5>Відповіді</h5>
         <div class="row align-items-center">
             <div class="col-sm-7"><input name="answer_1_1" type="text" class="form-control"></div>
