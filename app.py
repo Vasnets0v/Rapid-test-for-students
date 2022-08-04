@@ -4,8 +4,11 @@ import sqlite3
 import os
 import time
 import random
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, login_required
 
 app = Flask(__name__)
+
 
 if os.path.exists("databases"):
     pass
@@ -49,6 +52,12 @@ def create_new_table(new_topic):
         );""")
 
 
+def create_db():
+    with open('sq_db.sql', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
+
+
 def get_tables_from_db():
     all_table_content = sql_request.execute("SELECT * FROM sqlite_master WHERE type='table'")
     table_list = []
@@ -90,6 +99,25 @@ def save_img(new_img):
 @app.route('/', methods=['POST', 'GET'])
 def index():
     return render_template('index.html')
+
+
+@app.route('/admin_panel', methods=['POST', 'GET'])
+def admin_panel():
+    if request.method == 'POST':
+        if request.form['password'] == request.form['re_password']:
+            password_hash = generate_password_hash(request.form['password'])
+            sql_request.execute(f'''INSERT INTO admins (name, surname, email, password, created)
+                                    VALUES ("{request.form["name"]}", "{request.form["surname"]}",
+                                    "{request.form["email"]}", "{password_hash}", 1)''')
+            db.commit()
+        else:
+            pass
+    return render_template('admin_panel.html')
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def login_page():
+    return render_template('login.html')
 
 
 @app.route('/select_topic_for_student', methods=['POST', 'GET'])
