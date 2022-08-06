@@ -5,11 +5,11 @@
 {% block title %}Авторизація{% endblock %}
 
 {% block content %}
-<form action="">
+<form action="login" method="post">
     <p>Логін</p>
-    <input type="text">
+    <input type="email" name="email" required>
     <p>Пароль</p>
-    <input type="password">
-    <button>Вхід</button>
+    <input type="password" name="password" required>
+    <input type="submit" value="Вхід">
 </form>
 {% endblock %}

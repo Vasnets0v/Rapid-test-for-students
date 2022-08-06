@@ -1,13 +1,51 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 import sys
 import sqlite3
 import os
 import time
 import random
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_required
+from flask_login import LoginManager, login_required, UserMixin, login_user
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.secret_key = 'hiogesopuiht34908-n57rthrfu'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///databases/login.db'
+db_alchemy = SQLAlchemy(app)
+login_manager = LoginManager(app)
+
+
+class User(UserMixin, db_alchemy.Model):
+    id = db_alchemy.Column(db_alchemy.Integer, primary_key=True)
+    email = db_alchemy.Column(db_alchemy.String(64), unique=True, nullable=False)
+    name = db_alchemy.Column(db_alchemy.String(16), nullable=False)
+    surname = db_alchemy.Column(db_alchemy.String(16), nullable=False)
+    password = db_alchemy.Column(db_alchemy.String(512), nullable=False)
+    time_of_creation = db_alchemy.Column(db_alchemy.String(64), nullable=False)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def login_page():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            if check_password_hash(user.password, password):
+                login_user(user)
+                return redirect('/admin_panel')
+            else:
+                flash('Неправильний логін або пароль')
+        else:
+            flash('Неправильний логін або пароль')
+
+    return render_template('login.html')
 
 
 if os.path.exists("databases"):
@@ -102,22 +140,31 @@ def index():
 
 
 @app.route('/admin_panel', methods=['POST', 'GET'])
+@login_required
 def admin_panel():
     if request.method == 'POST':
         if request.form['password'] == request.form['re_password']:
-            password_hash = generate_password_hash(request.form['password'])
-            sql_request.execute(f'''INSERT INTO admins (name, surname, email, password, created)
-                                    VALUES ("{request.form["name"]}", "{request.form["surname"]}",
-                                    "{request.form["email"]}", "{password_hash}", 1)''')
-            db.commit()
+
+            email = request.form['email']
+            user = User.query.filter_by(email=email).first()
+
+            if user:
+                flash('Користувач з такім email вже зареєстрований')
+            else:
+                name = request.form["name"]
+                surname = request.form["surname"]
+                password_hash = generate_password_hash(request.form['password'])
+
+                new_admin = User(email=email, password=password_hash, name=name,
+                                 surname=surname, time_of_creation=time.time())
+                db_alchemy.session.add(new_admin)
+                db_alchemy.session.commit()
+
+                flash('Користувача успішно додано')
         else:
-            pass
+            flash('Паролі не співпадають')
+
     return render_template('admin_panel.html')
-
-
-@app.route('/login', methods=['POST', 'GET'])
-def login_page():
-    return render_template('login.html')
 
 
 @app.route('/select_topic_for_student', methods=['POST', 'GET'])
