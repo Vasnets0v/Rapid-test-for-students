@@ -6,4 +6,74 @@
 
 {% block content %}
 {{topic}}
+
+{% for i in content %}
+    <!--Question-->
+    <p>{{ content[i][0] }}</p>
+
+    <!--picture question-->
+    {% if content[i][1] != 'NULL' %}
+        {{ content[i][1] }}
+    {% endif %}
+
+    <!--answer 1-->
+    {% if content[i][2] != 'NULL' %}
+        {{ content[i][2] }}
+    {% endif %}
+
+    <!--picture answer 1-->
+    {% if content[i][3] != 'NULL' %}
+        {{ content[i][3] }}
+    {% endif %}
+
+    <!--answer 2-->
+    {% if content[i][4] != 'NULL' %}
+        {{ content[i][4] }}
+    {% endif %}
+
+    <!--picture answer 2-->
+    {% if content[i][5] != 'NULL' %}
+        {{ content[i][5] }}
+    {% endif %}
+
+    <!--answer 3-->
+    {% if content[i][6] != 'NULL' %}
+        {{ content[i][6] }}
+    {% endif %}
+
+    <!--picture answer 3-->
+    {% if content[i][7] != 'NULL' %}
+        {{ content[i][7] }}
+    {% endif %}
+
+    <!--answer 4-->
+    {% if content[i][8] != 'NULL' %}
+        {{ content[i][8] }}
+    {% endif %}
+
+    <!--picture answer 4-->
+    {% if content[i][9] != 'NULL' %}
+        {{ content[i][9] }}
+    {% endif %}
+
+    <!--answer 5-->
+    {% if content[i][10] != 'NULL' %}
+        {{ content[i][10] }}
+    {% endif %}
+
+    <!--picture answer 5-->
+    {% if content[i][11] != 'NULL' %}
+        {{ content[i][11] }}
+    {% endif %}
+
+    <!--answer 6-->
+    {% if content[i][12] != 'NULL' %}
+        {{ content[i][12] }}
+    {% endif %}
+
+    <!--picture answer 6-->
+    {% if content[i][13] != 'NULL' %}
+        {{ content[i][13] }}
+    {% endif %}
+{%- endfor %}
 {% endblock %}

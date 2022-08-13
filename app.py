@@ -115,9 +115,8 @@ def get_content_from_db(num_of_questions, topic):
 
     content = {}
     for i in range(num_of_questions):
-        sql_request.execute(f"SELECT question, img_question, answer_1, answer_2, answer_3, answer_4, "
-                            f"answer_5, answer_6, img_1, img_2, img_3, img_4, img_5, img_6 FROM {topic} "
-                            f"WHERE id = '{random_ids[i]}'")
+        sql_request.execute(f"""SELECT question, img_question, answer_1, img_1, answer_2, img_2, answer_3, img_3, 
+        answer_4, img_4, answer_5, img_5, answer_6, img_6 FROM {topic} WHERE id = '{random_ids[i]}'""")
         content[random_ids[i]] = sql_request.fetchone()
     print(content)
     return content
@@ -187,8 +186,10 @@ def testing():
         return "You don't have permissions!"
 
     if topic:
-        get_content_from_db(3, topic)
-        return render_template('testing.html', topic=topic)
+        content = get_content_from_db(3, topic)
+        for _ in content:
+            print(_)
+        return render_template('testing.html', topic=topic, content=content)
 
 
 @app.route('/save_new_test', methods=['POST', 'GET'])
