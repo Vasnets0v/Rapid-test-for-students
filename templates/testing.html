@@ -5,75 +5,40 @@
 {% block title %}Тестування{% endblock %}
 
 {% block content %}
-{{topic}}
 
-{% for i in content %}
-    <!--Question-->
-    <p>{{ content[i][0] }}</p>
+<form action="process_test" method="post" enctype="multipart/form-data">
+    {{topic}}
 
-    <!--picture question-->
-    {% if content[i][1] != 'NULL' %}
-        {{ content[i][1] }}
-    {% endif %}
+    {% for test in content %}
+        <!--question-->
+        {% if content[test][0] != 'NULL' %}
+            {{ content[test][0] }}
+        {% endif %}
 
-    <!--answer 1-->
-    {% if content[i][2] != 'NULL' %}
-        {{ content[i][2] }}
-    {% endif %}
+        <!--question picture-->
+        {% if content[test][1] != 'NULL' %}
+            {{ content[test][1] }}
+        {% endif %}
 
-    <!--picture answer 1-->
-    {% if content[i][3] != 'NULL' %}
-        {{ content[i][3] }}
-    {% endif %}
+        {% for random_number in content[test][14] %}
 
-    <!--answer 2-->
-    {% if content[i][4] != 'NULL' %}
-        {{ content[i][4] }}
-    {% endif %}
+            {% if content[test][random_number * 2] != 'NULL' %}
+                <p>{{ content[test][random_number * 2] }}</p>
+                <input type="radio"  name="radio_{{ test }}" value="{{ random_number }}">
+            {% endif %}
 
-    <!--picture answer 2-->
-    {% if content[i][5] != 'NULL' %}
-        {{ content[i][5] }}
-    {% endif %}
+            {% if content[test][(random_number * 2) + 1] != 'NULL' %}
+                <img src="databases/img/{{ content[test][(random_number * 2) + 1] }}" alt="img">
+            {% endif %}
 
-    <!--answer 3-->
-    {% if content[i][6] != 'NULL' %}
-        {{ content[i][6] }}
-    {% endif %}
+        {% endfor %}
 
-    <!--picture answer 3-->
-    {% if content[i][7] != 'NULL' %}
-        {{ content[i][7] }}
-    {% endif %}
+    {% endfor %}
+    <input type="hidden" value="{{ test_ids }}" id="test_ids" name="test_ids">
+    <input type="hidden" value="{{ topic }}" id="topic" name="topic">
+    <input type="hidden" value="{{ group }}" name="group">
+    <input type="hidden" value="{{ student_name }}" name="student_name">
+    <input type="submit" value="Завершити тест">
+</form>
 
-    <!--answer 4-->
-    {% if content[i][8] != 'NULL' %}
-        {{ content[i][8] }}
-    {% endif %}
-
-    <!--picture answer 4-->
-    {% if content[i][9] != 'NULL' %}
-        {{ content[i][9] }}
-    {% endif %}
-
-    <!--answer 5-->
-    {% if content[i][10] != 'NULL' %}
-        {{ content[i][10] }}
-    {% endif %}
-
-    <!--picture answer 5-->
-    {% if content[i][11] != 'NULL' %}
-        {{ content[i][11] }}
-    {% endif %}
-
-    <!--answer 6-->
-    {% if content[i][12] != 'NULL' %}
-        {{ content[i][12] }}
-    {% endif %}
-
-    <!--picture answer 6-->
-    {% if content[i][13] != 'NULL' %}
-        {{ content[i][13] }}
-    {% endif %}
-{%- endfor %}
 {% endblock %}

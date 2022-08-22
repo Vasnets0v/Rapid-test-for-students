@@ -8,9 +8,9 @@
 <div class="custom_container">
     <form action="{{ url_for('testing') }}" method="post">
         <div class="text">Ім'я та прізвище</div>
-        <input type="text" name="student_name" class="form-control">
+        <input type="text" name="student_name" class="form-control" required>
         <div class="text">Назва групи</div>
-        <input type="text" name="group" class="form-control">
+        <input type="text" name="group" class="form-control" required>
         <div class="text">Оберіть тему для проходження тесту</div>
         <select style="margin-top: 10px;" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="select_topic">
             {% for value in table_list%}

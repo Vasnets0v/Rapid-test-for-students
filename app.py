@@ -84,10 +84,18 @@ def create_new_table(new_topic):
         img_4 varchar(255),
         img_5 varchar(255),
         img_6 varchar(255),
-        right_answer varchar(255),
-        testing_time varchar(255),
-        num_display_questions varchar(255)
+        right_answer varchar(255)
         );""")
+
+
+def create_table_for_staff_info(topic):
+    sql_request.execute(f"""
+    CREATE TABLE IF NOT EXISTS score_for_theme_{topic} (
+    id integer PRIMARY KEY AUTOINCREMENT,
+    user_name varchar(64),
+    user_group varchar(16),
+    percentage_score integer
+    );""")
 
 
 def create_db():
@@ -117,8 +125,15 @@ def get_content_from_db(num_of_questions, topic):
     for i in range(num_of_questions):
         sql_request.execute(f"""SELECT question, img_question, answer_1, img_1, answer_2, img_2, answer_3, img_3, 
         answer_4, img_4, answer_5, img_5, answer_6, img_6 FROM {topic} WHERE id = '{random_ids[i]}'""")
-        content[random_ids[i]] = sql_request.fetchone()
-    print(content)
+
+        tuple_content = sql_request.fetchone()
+        array_content = []
+
+        for item in tuple_content:
+            array_content.append(item)
+
+        content[random_ids[i]] = array_content
+
     return content
 
 
@@ -131,6 +146,19 @@ def save_img(new_img):
 
     new_img.save(os.path.join(app.config["IMAGE_UPLOADS"], new_img.filename))
     return name
+
+
+def process_user_result(correct_answers, user_answers):
+    num_of_tests = len(correct_answers)
+    score = 0
+
+    for correct_ans, user_ans in zip(correct_answers, user_answers):
+        if correct_answers[correct_ans] == user_answers[user_ans]:
+            score += 1
+
+    percentage_score = round((score * 100) / num_of_tests)
+
+    return percentage_score
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -180,16 +208,76 @@ def select_topic():
 
 @app.route('/testing', methods=['POST', 'GET'])
 def testing():
-    try:
-        topic = request.form['select_topic']
-    except Exception:
-        return "You don't have permissions!"
+    number_of_tests = 3
 
-    if topic:
-        content = get_content_from_db(3, topic)
-        for _ in content:
-            print(_)
-        return render_template('testing.html', topic=topic, content=content)
+    topic = request.form.get('select_topic')
+    student_name = request.form.get('student_name')
+    group = request.form.get('group')
+
+    if topic and student_name and group:
+        content = get_content_from_db(number_of_tests, topic)
+
+        def get_mixed_order(answers):
+            return random.sample(range(1, answers + 1), answers)
+
+        test_ids = []
+
+        for i in content:
+            test_ids.append(i)
+
+            if content[i][8] == 'NULL':
+                if content[i][9] == 'NULL':
+                    content[i].append(get_mixed_order(3))
+
+            elif content[i][10] == 'NULL':
+                if content[i][11] == 'NULL':
+                    content[i].append(get_mixed_order(4))
+
+            elif content[i][12] == 'NULL':
+                if content[i][13] == 'NULL':
+                    content[i].append(get_mixed_order(5))
+
+            else:
+                content[i].append(get_mixed_order(6))
+
+        return render_template('testing.html', topic=topic, student_name=student_name, group=group, content=content,
+                               test_ids=test_ids)
+
+    flash('Помилка, відсутня тема тестування')
+    return redirect('/')
+
+
+@app.route('/process_test', methods=['POST', 'GET'])
+def process_test():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        user_name = request.form.get('student_name')
+        group = request.form.get('group')
+
+        str_test_ids = request.form['test_ids']
+        test_ids = str_test_ids.strip('[]').split(', ')
+
+        correct_answers = {}
+        user_answers = {}
+
+        for test_id in test_ids:
+            answers_from_db = sql_request.execute(f'SELECT right_answer FROM {topic} WHERE id = {int(test_id)}')
+            correct_answers[test_id] = answers_from_db.fetchone()[0]
+
+            user_answers[int(test_id)] = request.form.get(f'radio_{test_id}')
+
+        result = process_user_result(correct_answers, user_answers)
+
+        create_table_for_staff_info(topic)
+        sql_request.execute(f"""INSERT INTO score_for_theme_{topic} (user_name, user_group, percentage_score)
+                                VALUES ('{user_name}', '{group}', '{result}');""")
+        db.commit()
+        flash("Ваш результат збережено")
+
+    else:
+        flash('it do not work')
+        return redirect('/')
+    return redirect('/')
 
 
 @app.route('/save_new_test', methods=['POST', 'GET'])
@@ -209,8 +297,9 @@ def save_test():
             new_img_question_name = "NULL"
 
         answers = []
-        correct_answer = '0 '
         img_answers = []
+
+        correct_answer = request.form.get(f'radio_{question_id}')
 
         total_answers = int(request.form[f'total_answers_{question_id}'])
 
@@ -230,12 +319,6 @@ def save_test():
                 img_answers.append(new_img_name)
             else:
                 img_answers.append('NULL')
-
-            try:
-                temp_trash = request.form[f'checkbox_{question_id}_{num}']
-                correct_answer += f"{num}" + " "
-            except Exception:
-                pass
 
         for _ in range(6 - total_answers):
             answers.append('NULL')
