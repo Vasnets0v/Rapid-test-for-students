@@ -10,14 +10,10 @@ def create_directories_for_db():
     else:
         os.mkdir("databases")
 
-    if os.path.exists("databases/img"):
+    if os.path.exists("static/img_database"):
         pass
     else:
-        os.mkdir("databases/img")
-
-
-def create_sqlalchemy_db():
-    db_alchemy.create_all()
+        os.mkdir("static/img_database")
 
 
 def get_mixed_order(answers):
@@ -54,6 +50,27 @@ def get_all_tables_from_db():
         table_list.append(i[1])
 
     return table_list
+
+
+def get_all_topics():
+    raw_topics = sql_request.execute(f"SELECT topic_title FROM tests_info")
+    topics = []
+
+    for topic in raw_topics:
+        topics.append(topic[0])
+
+    return topics
+
+
+def get_all_info_about_topics():
+    raw_content = sql_request.execute(f"SELECT * FROM tests_info")
+
+    content = []
+
+    for item in raw_content:
+        content.append(item)
+
+    return content
 
 
 def get_content_from_db(num_of_questions, topic):

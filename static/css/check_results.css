@@ -1,0 +1,16 @@
+.wrapper{
+  margin-top: 10%;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 30px;
+  width: max-content;
+}
+
+.button_centre {
+text-align: center;
+margin-top: 15px;
+}
+
+h5 {
+text-align: center;
+}

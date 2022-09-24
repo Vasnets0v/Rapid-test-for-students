@@ -11,7 +11,7 @@ class User(UserMixin, db_alchemy.Model):
     time_of_creation = db_alchemy.Column(db_alchemy.String(64), nullable=False)
 
 
-def create_new_table(new_topic):
+def table_for_new_topic(new_topic):
     sql_request.execute(f"""
     CREATE TABLE IF NOT EXISTS {new_topic} (
         id integer PRIMARY KEY AUTOINCREMENT,
@@ -33,11 +33,24 @@ def create_new_table(new_topic):
         );""")
 
 
-def create_table_for_staff_info(topic):
+def student_score(topic):
     sql_request.execute(f"""
     CREATE TABLE IF NOT EXISTS score_for_theme_{topic} (
     id integer PRIMARY KEY AUTOINCREMENT,
     user_name varchar(64),
     user_group varchar(16),
-    percentage_score integer
+    percentage_score integer,
+    end_time varchar(16)
+    );""")
+
+
+# information about all exists tests
+def tests_info():
+    sql_request.execute(f"""
+    CREATE TABLE IF NOT EXISTS tests_info (
+    id integer PRIMARY KEY AUTOINCREMENT,
+    topic_title varchar(64),
+    time_to_pass integer,
+    topic_status varchar(64),
+    questions integer
     );""")

@@ -1,24 +1,84 @@
 {% extends 'main_template.html' %}
 
-{% block style %}<link rel="stylesheet" href="static/css/index.css">{% endblock %}
+{% block style %}<link rel="stylesheet" href="static/css/admin_panel.css">{% endblock %}
 
 {% block title %}Панель адміністратора{% endblock %}
 
 {% block content %}
-<div class="custom_container">
-    <form action="admin_panel" method="post">
+<div class="wrapper">
+    <div class="create_test">
+        <a href="/select_topic">Створити тест або додати запитання</a>
+    </div>
+</div>
+<div class="wrapper">
+    <div class="registration">
+        <form action="admin_panel" method="post">
+        <h5>Додати нового адміністратора</h5><p></p>
         <p>Імя</p>
-        <input type="text" name="name" required>
+        <input type="text" name="name" class="form-control" required><p></p>
         <p>Прізвище</p>
-        <input type="text" name="surname" required>
+        <input type="text" name="surname" class="form-control" required><p></p>
         <p>E-mail</p>
-        <input type="email" name="email" required>
+        <input type="email" name="email" class="form-control" required><p></p>
         <p>Пароль</p>
-        <input type="password" name="password" required>
+        <input type="password" name="password" class="form-control" required><p></p>
         <p>Повторити пароль</p>
-        <input type="password" name="re_password" required>
+        <input type="password" name="re_password" class="form-control" required>
         <p></p>
-        <input type="submit" value="Зареєструвати">
-    </form>
+        <div class="button_centre"><input type="submit" class="btn btn-primary" value="Зареєструвати"></div>
+        </form>
+    </div>
+</div>
+<div class="wrapper">
+    <div class="change_password">
+        <form action="/change_password" method="post" enctype="multipart/form-data">
+            <h5>Змінити пароль</h5>
+            <p></p>
+            <p>Email</p>
+            <input name="email" type="email" class="form-control">
+            <p></p>
+            <p>Старий пароль</p>
+            <input name="old_password" type="password" class="form-control">
+            <p></p>
+            <p>Новий пароль</p>
+            <input name="new_password" type="password" class="form-control">
+            <p></p>
+            <p>Повторити пароль</p>
+            <input name="re_password" type="password" class="form-control">
+            <div class="button_centre"><input type="submit" class="btn btn-primary" value="Змінити"></div>
+        </form>
+    </div>
+</div>
+<div class="wrapper">
+    <div class="tests_settings">
+        <h5>Налаштування тестів</h5>
+        <p></p>
+        <div class="row">
+        {% for topic in topics %}
+            <div class="col-sm-5">
+                <form action="/setting_test" method="post">
+                    <p></p>
+                    <h5>{{ topic[1] }}</h5>
+                    <p>Час (хвилин):  <input name="time" type="text" value="{{ topic[2] }}" class="form-control"></p>
+                    <p>Питань: <input name="questions" type="text" value="{{ topic[4] }}" class="form-control"></p>
+                    <div class="status">Статус:
+                        <select name="status" id="" class="form-select">
+                            {% if topic[3] == 'closed' %}
+                                <option class="close_topic" value="close">Закрито</option>
+                                <option class="open_topic" value="open">Відкрито</option>
+                            {% endif %}
+                            {% if topic[3] == 'open' %}
+                                <option class="open_topic" value="open">Відкрито</option>
+                                <option class="close_topic" value="closed">Закрито</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="button_centre"><input type="submit" value="Зберегти" class="btn btn-primary"></div>
+                    <input name="topic" type="hidden" value="{{ topic[1] }}">
+                </form>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -6,39 +6,46 @@
 
 {% block content %}
 
-<form action="process_test" method="post" enctype="multipart/form-data">
-    {{topic}}
+<div class="wrapper">
+    <form action="process_test" method="post" enctype="multipart/form-data">
+        <h4>Тема: {{topic}}</h4>
+        <p></p>
 
-    {% for test in content %}
-        <!--question-->
-        {% if content[test][0] != 'NULL' %}
-            {{ content[test][0] }}
-        {% endif %}
+        {% for test in content %}
+            <div class="question">
+                <!--question-->
+                {% if content[test][0] != 'NULL' %}
+                    <h5>Запитання: {{ content[test][0] }}</h5>
+                {% endif %}
 
-        <!--question picture-->
-        {% if content[test][1] != 'NULL' %}
-            {{ content[test][1] }}
-        {% endif %}
+                <!--question picture-->
+                {% if content[test][1] != 'NULL' %}
+                    <img src="static/img_database/{{ content[test][1] }}">
+                {% endif %}
+            </div>
 
-        {% for random_number in content[test][14] %}
+            <div class="answer">
+                {% for random_number in content[test][14] %}
 
-            {% if content[test][random_number * 2] != 'NULL' %}
-                <p>{{ content[test][random_number * 2] }}</p>
-                <input type="radio"  name="radio_{{ test }}" value="{{ random_number }}">
-            {% endif %}
 
-            {% if content[test][(random_number * 2) + 1] != 'NULL' %}
-                <img src="databases/img/{{ content[test][(random_number * 2) + 1] }}" alt="img">
-            {% endif %}
+                    {% if content[test][random_number * 2] != 'NULL' %}
+                        <p><input type="radio"  name="radio_{{ test }}" value="{{ random_number }}" class="form-check-input"> {{ content[test][random_number * 2] }}</p>
+                    {% endif %}
+
+                    {% if content[test][(random_number * 2) + 1] != 'NULL' %}
+                        <div><img src="static/img_database/{{ content[test][(random_number * 2) + 1] }}"></div>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
 
         {% endfor %}
-
-    {% endfor %}
-    <input type="hidden" value="{{ test_ids }}" id="test_ids" name="test_ids">
-    <input type="hidden" value="{{ topic }}" id="topic" name="topic">
-    <input type="hidden" value="{{ group }}" name="group">
-    <input type="hidden" value="{{ student_name }}" name="student_name">
-    <input type="submit" value="Завершити тест">
-</form>
+        <input type="hidden" value="{{ test_ids }}" id="test_ids" name="test_ids">
+        <input type="hidden" value="{{ topic }}" id="topic" name="topic">
+        <input type="hidden" value="{{ group }}" name="group">
+        <input type="hidden" value="{{ student_name }}" name="student_name">
+        <div class="button_centre"><input type="submit" value="Завершити тест" class="btn btn-primary"></div>
+    </form>
+</div>
 
 {% endblock %}

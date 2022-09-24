@@ -1,0 +1,22 @@
+.wrapper {
+margin-top: 5%;
+width: 50%;
+margin-right: auto;
+margin-left: auto;
+}
+
+h4 {
+text-align: center;
+}
+
+.button_centre {
+text-align: center;
+margin-top: 15px;
+}
+
+.question {
+}
+
+.answer {
+display: inline;
+}

@@ -6,18 +6,16 @@
 
 {% block content %}
 <div class="custom_container">
-    <form action="{{ url_for('testing') }}" method="post">
+    <form action="/testing" method="post">
         <div class="text">Ім'я та прізвище</div>
+        <p></p>
         <input type="text" name="student_name" class="form-control" required>
         <div class="text">Назва групи</div>
+        <p></p>
         <input type="text" name="group" class="form-control" required>
-        <div class="text">Оберіть тему для проходження тесту</div>
-        <select style="margin-top: 10px;" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="select_topic">
-            {% for value in table_list%}
-            <option value="{{ value }}">{{ value }}</option>
-            {%- endfor %}
-        </select>
-        <div class="buttons"><input style="text-align: center;" type="submit" value="Далі" class="btn btn-primary"></div>
+        <p></p>
+        <div class="buttons"><input style="text-align: center;" type="submit" value="Почати" class="btn btn-primary"></div>
+        <input name="topic" type="hidden" value="{{ topic }}">
     </form>
 </div>
 {% endblock %}

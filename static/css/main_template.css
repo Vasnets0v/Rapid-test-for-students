@@ -1,3 +1,50 @@
-body {
-background-image: url(../img/doodles.png);
+.top_panel {
+background-color: black;
+margin-top: 25px;
+height: 80px;
+font-size: 17px;
+padding-top: 25px;
+}
+
+.top_panel a {
+padding-left: 30px;
+color: white;
+text-decoration: none;
+}
+
+.top_panel  a:link {
+color: white;
+text-decoration: none;
+border: none;
+}
+
+.top_panel a:visited {
+color: white;
+text-decoration: none;
+border: none;
+}
+
+.top_panel a:hover {
+color: white;
+text-decoration: none;
+border: none;
+}
+
+.top_panel a:active {
+color: white;
+text-decoration: none;
+border: none;
+}
+
+.alert {
+	text-align: center;
+	width: 30vw;
+	margin: auto;
+	margin-bottom: 1vw;
+	background-color: #373252;
+	color: white;
+	border: none;
+	padding: 0.5vw;
+	border-radius: 0.4vw;
+	margin-top: 1%;
 }

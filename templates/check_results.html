@@ -1,7 +1,20 @@
 {% extends 'main_template.html' %}
 
+{% block style %}<link rel="stylesheet" href="static/css/check_results.css">{% endblock %}
+
 {% block title %}Таблиця результатів{% endblock %}
 
 {% block content %}
-
+<div class="wrapper">
+    <h5>Оберіть тему для перегляду результату</h5>
+    <p></p>
+    <form action="/score" method="post">
+        <select name="topic" class="form-select">
+            {% for topic in topics %}
+                <option value="{{ topic }}">{{ topic }}</option>
+            {% endfor %}
+        </select>
+        <div class="button_centre"><input type="submit" value="Дізнатися" class="btn btn-primary"></div>
+    </form>
+</div>
 {% endblock %}

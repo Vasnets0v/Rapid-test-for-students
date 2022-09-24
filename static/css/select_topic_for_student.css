@@ -1,5 +1,5 @@
 .custom_container{
-  width: 100%;
+  width: 75%;
   padding-right: 500px;
   padding-left: 500px;
   margin-right: auto;
@@ -7,14 +7,12 @@
 }
 
 .custom_container form{
- margin-top: 150px;
+ margin-top: 50%;
 }
 
 .text {
 margin-top: 10px;
 font-size: 18px;
-font-weight: bold;
-text-align: center;
 }
 
 .buttons {

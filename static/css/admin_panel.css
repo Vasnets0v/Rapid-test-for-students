@@ -1,0 +1,53 @@
+.wrapper{
+  margin-top: 20px;
+  margin-right: auto;
+  margin-left: auto;
+  width: max-content;
+}
+
+.button_centre {
+text-align: center;
+margin-top: 15px;
+}
+
+.create_test {
+margin-top: 50px;
+font-weight: bold;
+font-size: 20px;
+border: solid;
+padding: 5px;
+}
+
+.create_test a {
+color: black;
+text-decoration: none;
+}
+
+.col-sm-5 {
+height: max-content;
+border: solid;
+margin: 20px;
+padding: 10px;
+}
+
+.registration {
+padding: 30px;
+}
+
+.tests_settings {
+padding: 50px;
+}
+
+h5 {
+text-align: center;
+}
+
+.close_topic {
+display: inline;
+color: red;
+}
+
+.open_topic {
+color: green;
+display: inline;
+}

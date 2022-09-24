@@ -17,7 +17,7 @@ sql_request = db.cursor()
 login_manager = LoginManager(app)
 
 main_app_path = os.path.dirname(os.path.abspath(__file__))
-databases_path = main_app_path + '/databases/img'
+databases_path = main_app_path + '/static/img_database'
 app.config["IMAGE_UPLOADS"] = databases_path
 
 import models
@@ -29,24 +29,91 @@ def load_user(user_id):
     return models.User.query.get(int(user_id))
 
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('Спочатку необхідно авторизуватися')
+    return redirect('/login')
+
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    return render_template('index.html')
-
-
-@app.route('/select_topic_for_student', methods=['POST', 'GET'])
-def select_topic_for_student():
-    return render_template('select_topic_for_student.html', table_list=funcs.get_all_tables_from_db())
+    return render_template('index.html', topics=funcs.get_all_info_about_topics())
 
 
 @app.route('/select_topic', methods=['POST', 'GET'])
+@login_required
 def select_topic():
-    return render_template('select_topic_for_create_test.html', table_list=funcs.get_all_tables_from_db())
+    return render_template('select_topic_for_create_test.html', table_list=funcs.get_all_topics())
 
 
 @app.route('/check_results', methods=['POST', 'GET'])
 def check_results():
-    return render_template('check_results.html')
+    return render_template('check_results.html', topics=funcs.get_all_topics())
+
+
+@app.route('/score', methods=['POST', 'GET'])
+def score():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        users_score = sql_request.execute(f"SELECT * FROM score_for_theme_{topic}")
+
+        users = []
+
+        for user in users_score:
+            users.append(user)
+
+        return render_template('score.html', topic=topic, users=users)
+
+
+@app.route('/change_password', methods=['POST', 'GET'])
+def change_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+        re_password = request.form.get('re_password')
+
+        if new_password == re_password:
+            user = db_alchemy.session.query(models.User).filter_by(email=email).first()
+            if user:
+                if check_password_hash(user.password, old_password):
+                    password_hash = generate_password_hash(new_password)
+
+                    user.password = password_hash
+                    db_alchemy.session.commit()
+
+                    flash('Пароль успішно змінено')
+                    return redirect('/admin_panel')
+
+                else:
+                    flash('старий пароль не вірний')
+                    return redirect('/admin_panel')
+
+            else:
+                flash('користувача не знайдено')
+                return redirect('/admin_panel')
+
+        else:
+            flash('паролі не співпадають')
+            return redirect('/admin_panel')
+
+
+@app.route('/select_topic_for_student', methods=['POST', 'GET'])
+def select_topic_for_student():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        topic_status = sql_request.execute(f'SELECT topic_status FROM '
+                                           f'tests_info WHERE topic_title = "{topic}"').fetchone()
+
+        if topic_status[0] == "closed":
+            flash('Тема закрита!')
+            return redirect('/')
+
+    else:
+        flash('Недостатньо прав')
+        return redirect('/')
+
+    return render_template('select_topic_for_student.html', topic=topic)
 
 
 @app.route('/admin_panel', methods=['POST', 'GET'])
@@ -74,7 +141,31 @@ def admin_panel():
         else:
             flash('Паролі не співпадають')
 
-    return render_template('admin_panel.html')
+    return render_template('admin_panel.html', topics=funcs.get_all_info_about_topics())
+
+
+@app.route('/setting_test', methods=['POST', 'GET'])
+@login_required
+def setting_test():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        time_to_pass = request.form.get('time')
+        questions = request.form.get('questions')
+        status = request.form.get('status')
+
+        total_questions_in_topic = sql_request.execute(f"SELECT * FROM {topic} WHERE "
+                                                       f"id=(SELECT max(id) FROM {topic});").fetchone()
+
+        if total_questions_in_topic is None or total_questions_in_topic[0] < int(questions):
+            flash('Недостатньо питань в темі')
+            return redirect('/admin_panel')
+
+        else:
+            sql_request.execute(f"""UPDATE tests_info SET time_to_pass='{time_to_pass}', topic_status='{status}', 
+                                questions='{questions}' WHERE topic_title='{topic}'""")
+            db.commit()
+
+        return redirect('/admin_panel')
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -98,11 +189,15 @@ def login_page():
 
 @app.route('/testing', methods=['POST', 'GET'])
 def testing():
-    number_of_tests = 3
 
-    topic = request.form.get('select_topic')
+    topic = request.form.get('topic')
     student_name = request.form.get('student_name')
     group = request.form.get('group')
+    number_of_tests = sql_request.execute(f'SELECT questions FROM tests_info WHERE topic_title="{topic}"').fetchone()[0]
+
+    if number_of_tests == 0:
+        flash('Питання відсутні')
+        return redirect('/')
 
     if topic and student_name and group:
         content = funcs.get_content_from_db(number_of_tests, topic)
@@ -155,10 +250,10 @@ def process_test():
             user_answers[int(test_id)] = request.form.get(f'radio_{test_id}')
 
         result = funcs.process_user_result(correct_answers, user_answers)
+        end_time = time.strftime("%d.%m.%Y %H:%M")
 
-        models.create_table_for_staff_info(topic)
-        sql_request.execute(f"""INSERT INTO score_for_theme_{topic} (user_name, user_group, percentage_score)
-                                VALUES ('{user_name}', '{group}', '{result}');""")
+        sql_request.execute(f"""INSERT INTO score_for_theme_{topic} (user_name, user_group, percentage_score, end_time)
+                                VALUES ('{user_name}', '{group}', '{result}', '{end_time}');""")
         db.commit()
         flash("Ваш результат збережено")
 
@@ -169,6 +264,7 @@ def process_test():
 
 
 @app.route('/save_new_test', methods=['POST', 'GET'])
+@login_required
 def save_test():
 
     topic = request.form['topic_test']
@@ -221,19 +317,28 @@ def save_test():
                             f'"{img_answers[1]}", "{img_answers[2]}", "{img_answers[3]}", "{img_answers[4]}"'
                             f', "{img_answers[5]}", "{new_img_question_name}")')
         db.commit()
+    flash("Тести успішно збережені")
 
     return redirect('/')
 
 
 # БАГ! при створенні таблиці з числовою назвою та коли є пробіли в назві
 @app.route('/create_test', methods=['POST', 'GET'])
+@login_required
 def new_test():
 
     if request.method == 'POST':
         new_topic = request.form.get('topic')
 
         if new_topic:
-            models.create_new_table(new_topic)
+            models.table_for_new_topic(new_topic)
+            models.student_score(new_topic)
+
+            sql_request.execute(f""" INSERT INTO tests_info (topic_title, time_to_pass, topic_status, questions)
+            VALUES ('{new_topic}', 0, 'closed', 0)""")
+
+            db.commit()
+
             return render_template('create_test.html', current_topic=new_topic)
         else:
             topic = request.form.get('select_topic')

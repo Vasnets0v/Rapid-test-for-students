@@ -1,9 +1,31 @@
-.custom_container{
-  width: 100%;
-  padding-right: 600px;
-  padding-left: 600px;
-  margin-right: auto;
-  margin-left: auto;
-  margin-top: 250px;
-  text-align: center;
+.wrapper {
+margin-top: 5%;
+width: 50%;
+margin-right: auto;
+margin-left: auto;
+}
+
+.col-sm-5 {
+height: 220px;
+border: solid;
+margin: 20px 10px;
+}
+
+h5 {
+text-align: center;
+}
+
+.button_centre {
+text-align: center;
+margin-top: 15px;
+}
+
+.close_topic {
+display: inline;
+color: red;
+}
+
+.open_topic {
+color: green;
+display: inline;
 }

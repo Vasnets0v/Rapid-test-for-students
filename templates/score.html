@@ -1,0 +1,30 @@
+{% extends 'main_template.html' %}
+
+{% block style %}<link rel="stylesheet" href="static/css/score.css">{% endblock %}
+
+{% block title %}Таблиця результатів{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <h5>{{ topic }}</h5>
+    <p></p>
+    <div class="row">
+        <div class="col">Прізвище та Імя</div>
+        <div class="col">Група</div>
+        <div class="col">Результат</div>
+        <div class="col">Завершено тест</div>
+        <div class="w-100"></div>
+        <p></p>
+        <hr>
+    </div>
+    {% for user in users %}
+        <div class="row">
+            <div class="col">{{ user[1] }} <p></p></div>
+            <div class="col">{{ user[2] }}</div>
+            <div class="col">{{ user[3] }}%</div>
+            <div class="col">{{ user[4] }}</div>
+            <div class="w-100"></div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
