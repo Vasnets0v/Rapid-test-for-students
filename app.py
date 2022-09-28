@@ -375,8 +375,4 @@ def new_test():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        arg_host, arg_port = sys.argv[1].split(':')
-        app.run(host=arg_host, port=arg_port, debug=True)
-    else:
-        app.run(debug=True)
+    app.run(host='0.0.0.0', port=1194)
