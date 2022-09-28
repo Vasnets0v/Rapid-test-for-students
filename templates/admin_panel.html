@@ -73,7 +73,11 @@
                             {% endif %}
                         </select>
                     </div>
+                    <input name="topic" type="hidden" value="{{ topic[1] }}">
                     <div class="button_centre"><input type="submit" value="Зберегти" class="btn btn-primary"></div>
+                </form>
+                <form action="/remove_topic" method="post">
+                    <div class="button_centre"><input type="submit" value="Видалити" class="btn btn-outline-danger btn-sm"></div>
                     <input name="topic" type="hidden" value="{{ topic[1] }}">
                 </form>
             </div>

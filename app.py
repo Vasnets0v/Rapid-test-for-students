@@ -51,6 +51,27 @@ def check_results():
     return render_template('check_results.html', topics=funcs.get_all_topics())
 
 
+@app.route('/remove_topic', methods=['POST', 'GET'])
+def remove_topic():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+
+        if topic:
+            sql_request.execute(f'DROP TABLE {topic}')
+            sql_request.execute(f'DROP TABLE score_for_theme_{topic}')
+            sql_request.execute(f'DELETE FROM tests_info WHERE topic_title="{topic}"')
+            db.commit()
+            flash(f'Тема {topic} видалена')
+            return redirect('/admin_panel')
+        else:
+            flash('Відсутня тема')
+            return redirect('/')
+
+    else:
+        flash('Error')
+        return redirect('/')
+
+
 @app.route('/score', methods=['POST', 'GET'])
 def score():
     if request.method == 'POST':
