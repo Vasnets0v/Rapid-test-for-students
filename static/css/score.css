@@ -2,10 +2,15 @@
   margin-top: 5%;
   margin-right: auto;
   margin-left: auto;
-  padding: 30px;
   width: 75%;
 }
 
 h5 {
 padding-bottom: 30px;
+}
+
+@media screen and (max-width: 750px) {
+    .wrapper{
+      width: 95%;
+    }
 }

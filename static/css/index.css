@@ -29,3 +29,11 @@ color: red;
 color: green;
 display: inline;
 }
+
+@media screen and (max-width: 750px) {
+    .wrapper{
+      padding-right: 5%;
+      padding-left: 5%;
+      width: 80%;
+    }
+}

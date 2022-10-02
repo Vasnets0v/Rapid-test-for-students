@@ -1,7 +1,7 @@
 .custom_container{
   width: 75%;
-  padding-right: 500px;
-  padding-left: 500px;
+  padding-right: 25%;
+  padding-left: 25%;
   margin-right: auto;
   margin-left: auto;
 }
@@ -17,4 +17,11 @@ font-size: 18px;
 
 .buttons {
 text-align: center;
+}
+
+@media screen and (max-width: 750px) {
+    .custom_container{
+      padding-right: 5%;
+      padding-left: 5%;
+    }
 }

@@ -48,3 +48,12 @@ border: none;
 	border-radius: 0.4vw;
 	margin-top: 1%;
 }
+
+@media screen and (max-width: 750px) {
+    .top_panel a {
+    display: block;
+    }
+    .top_panel {
+    height: 155px;
+    }
+}

@@ -1,8 +1,7 @@
 .wrapper{
-  margin-top: 10%;
+  margin-top: 15%;
   margin-right: auto;
   margin-left: auto;
-  padding: 30px;
   width: max-content;
 }
 
@@ -13,4 +12,13 @@ margin-top: 15px;
 
 h5 {
 text-align: center;
+}
+
+@media screen and (max-width: 750px) {
+    .wrapper{
+      padding-right: 5%;
+      padding-left: 5%;
+      width: 80%;
+      margin-top: 50%;
+    }
 }
