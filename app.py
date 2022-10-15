@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, send_file
 import sys
 import sqlite3
 import os
@@ -22,6 +22,7 @@ app.config["IMAGE_UPLOADS"] = databases_path
 
 import models
 import funcs
+from funcs import ExelSheet
 
 
 @login_manager.user_loader
@@ -51,6 +52,17 @@ def check_results():
     return render_template('check_results.html', topics=funcs.get_all_topics())
 
 
+@app.route('/download_sheet', methods=['POST', 'GET'])
+@login_required
+def download_sheet():
+    topic = request.form.get('topic')
+    sheet = ExelSheet(topic)
+    sheet.insert_user_data()
+    name = sheet.file_name + '.xlsx'
+
+    return send_file(name, as_attachment=True)
+
+
 @app.route('/remove_topic', methods=['POST', 'GET'])
 def remove_topic():
     if request.method == 'POST':
@@ -76,7 +88,7 @@ def remove_topic():
 def score():
     if request.method == 'POST':
         topic = request.form.get('topic')
-        users_score = sql_request.execute(f"SELECT * FROM score_for_theme_{topic}")
+        users_score = sql_request.execute(f"SELECT * FROM score_for_theme_{topic} order by id desc")
 
         users = []
 

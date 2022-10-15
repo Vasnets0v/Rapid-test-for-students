@@ -6,7 +6,13 @@
 
 {% block content %}
 <div class="wrapper">
-    <h5>{{ topic }}</h5>
+    <form action="/download_sheet" method="post">
+        <div class="row justify-content-between">
+            <div class="col-sm-2"><h5>{{ topic }}</h5></div>
+            <div class="col-sm-2"><input type="submit" value="Завантажити exel таблицю" class="btn btn-primary"></div>
+        </div>
+        <input type="hidden" value="{{topic}}" name="topic">
+    </form>
     <p></p>
     <div class="row">
         <div class="col">Прізвище та Імя</div>

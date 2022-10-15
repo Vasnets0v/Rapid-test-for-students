@@ -1,7 +1,34 @@
 import random
 import time
 import os
-from app import sql_request, db_alchemy
+from openpyxl import Workbook
+from app import sql_request
+
+
+class ExelSheet:
+    def __init__(self, topic):
+        self.file_name = str(topic) + ' ' + str(time.strftime("%d.%m.%Y"))
+        self.wb = Workbook()
+        self.ws = self.wb.active
+        self.ws.title = '1'
+        self.raw_users_score = sql_request.execute(f"SELECT * FROM score_for_theme_{topic} order by id desc")
+        self.user_score = []
+
+        self.ws['A1'] = "№"
+        self.ws['B1'] = "Прізвище та Імя"
+        self.ws['C1'] = "Група"
+        self.ws['D1'] = "Результат"
+        self.ws['E1'] = "Завершено тест"
+
+        for user in self.raw_users_score:
+            self.user_score.append(user)
+
+    def insert_user_data(self):
+
+        for data in self.user_score:
+            self.ws.append(data)
+
+        self.wb.save(self.file_name + ".xlsx")
 
 
 def create_directories_for_db():
