@@ -52,15 +52,33 @@ def check_results():
     return render_template('check_results.html', topics=funcs.get_all_topics())
 
 
-@app.route('/download_sheet', methods=['POST', 'GET'])
+@app.route('/reset_score', methods=['POST'])
+@login_required
+def reset_score():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        sql_request.execute(f'DROP TABLE score_for_theme_{topic}')
+        models.student_score(topic)
+        db.commit()
+        flash(f'Записи в таблиці {topic} видалені')
+        return redirect('/')
+    else:
+        flash('Error')
+        return redirect('/')
+
+
+@app.route('/download_sheet', methods=['POST'])
 @login_required
 def download_sheet():
-    topic = request.form.get('topic')
-    sheet = ExelSheet(topic)
-    sheet.insert_user_data()
-    name = sheet.file_name + '.xlsx'
-
-    return send_file(name, as_attachment=True)
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        sheet = ExelSheet(topic)
+        sheet.insert_user_data()
+        name = sheet.file_name + '.xlsx'
+        return send_file(name, as_attachment=True)
+    else:
+        flash('Error')
+        return redirect('/')
 
 
 @app.route('/remove_topic', methods=['POST', 'GET'])

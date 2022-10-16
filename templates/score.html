@@ -7,10 +7,12 @@
 {% block content %}
 <div class="wrapper">
     <form action="/download_sheet" method="post">
-        <div class="row justify-content-between">
-            <div class="col-sm-2"><h5>{{ topic }}</h5></div>
-            <div class="col-sm-2"><input type="submit" value="Завантажити exel таблицю" class="btn btn-primary"></div>
-        </div>
+        <h5>{{ topic }}</h5>
+        <div class="button_right"><input type="submit" value="Завантажити exel таблицю" class="btn btn-primary"></div>
+        <input type="hidden" value="{{topic}}" name="topic">
+    </form>
+    <form action="/reset_score" method="post">
+        <div class="button_right"><input type="submit" value="RESET" class="btn btn-danger"></div>
         <input type="hidden" value="{{topic}}" name="topic">
     </form>
     <p></p>

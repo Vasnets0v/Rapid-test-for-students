@@ -9,6 +9,11 @@ h5 {
 padding-bottom: 30px;
 }
 
+.button_right {
+text-align: right;
+margin-top: 10px;
+}
+
 @media screen and (max-width: 750px) {
     .wrapper{
       width: 95%;
