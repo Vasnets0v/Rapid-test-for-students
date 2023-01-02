@@ -1,6 +1,5 @@
 import random
 import time
-import os
 from openpyxl import Workbook
 from app import sql_request
 
@@ -29,18 +28,6 @@ class ExelSheet:
             self.ws.append(data)
 
         self.wb.save(self.file_name + ".xlsx")
-
-
-def create_directories_for_db():
-    if os.path.exists("databases"):
-        pass
-    else:
-        os.mkdir("databases")
-
-    if os.path.exists("static/img_database"):
-        pass
-    else:
-        os.mkdir("static/img_database")
 
 
 def get_mixed_order(answers):
