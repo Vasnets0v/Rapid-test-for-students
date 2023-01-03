@@ -1,1 +1,4 @@
 venv/
+databases/
+static/img_database
+__pycache__/
