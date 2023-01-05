@@ -52,6 +52,17 @@ def check_results():
     return render_template('check_results.html', topics=funcs.get_all_topics())
 
 
+@app.route('/deletion_confirmation', methods=['POST', 'GET'])
+@login_required
+def deletion_confirmation():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        return render_template('deletion_confirmation.html', topic=topic)
+    else:
+        flash('Error')
+        return redirect('/')
+
+
 @app.route('/reset_score', methods=['POST'])
 @login_required
 def reset_score():

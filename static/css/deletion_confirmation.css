@@ -1,0 +1,22 @@
+.wrapper{
+    margin-top: 10%;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 30px;
+    width: max-content;
+  }
+
+.button_centre {
+    text-align: center;
+    margin-top: 15px;
+}
+
+p {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+span {
+    color: orange;
+}

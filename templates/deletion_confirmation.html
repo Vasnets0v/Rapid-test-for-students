@@ -1,0 +1,16 @@
+{% extends 'main_template.html' %}
+
+{% block style %}<link rel="stylesheet" href="static/css/deletion_confirmation.css">{% endblock %}
+
+{% block title %}Підтвердити видалення{% endblock %}
+
+{% block content %}
+    <div class="wrapper">
+        <form action="/reset_score" method="post">
+            <p>Ви впевнені що хочете видалити результати до теми:</p>
+            <p><span>{{topic}}</span></p>
+            <div class="button_centre"><input type="submit" value="Видалити" class="btn btn-danger"></div>
+            <input type="hidden" value="{{topic}}" name="topic">
+        </form>
+    </div>
+{% endblock %}
