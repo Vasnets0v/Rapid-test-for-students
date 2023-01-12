@@ -1,0 +1,19 @@
+{% extends 'main_template.html' %}
+
+{% block style %}<link rel="stylesheet" href="static/css/select_test_to_edit.css">{% endblock %}
+
+{% block title %}Виберіть тему{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <h5>Оберіть тест який хочете редагувати</h5>
+    <form action="/edit_test" method="post">
+        <select name="topic" class="form-select">
+            {% for topic in topics %}
+                <option value="{{ topic }}">{{ topic }}</option>
+            {% endfor %}
+        </select>
+        <div class="button_centre"><input type="submit" value="Редагувати" class="btn btn-primary"></div>
+    </form>
+</div>
+{% endblock %}

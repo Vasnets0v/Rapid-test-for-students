@@ -30,6 +30,22 @@ class ExelSheet:
         self.wb.save(self.file_name + ".xlsx")
 
 
+def get_all_records_from_table(topic):
+    raw_content = sql_request.execute(f"SELECT * FROM {topic}")
+    content = []
+
+    for item in raw_content:
+        content.append(item)
+
+    return content
+
+
+def get_num_of_records_in_table(topic):
+    num_of_records = sql_request.execute(f"SELECT COUNT('id') FROM {topic}")
+
+    return num_of_records.fetchall()[0][0]
+
+
 def get_mixed_order(answers):
     return random.sample(range(1, answers + 1), answers)
 

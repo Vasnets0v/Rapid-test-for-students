@@ -1,0 +1,70 @@
+{% extends 'main_template.html' %}
+
+{% block style %}<link rel="stylesheet" href="static/css/edit_test.css">{% endblock %}
+
+{% block title %}Редагування тесту{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <form action="/handle_edit_test_page" method="post">
+        <h3>Ви редагуєте тест з теми: <span class="topic_name">{{ topic }}</span></h3>
+        <h4>Запитань: {{ num_of_records }}</h4>
+        {% for record in range(num_of_records) %}
+
+            <div id="question_{{record + 1}}">
+                <p>Запитання {{record + 1}}</p>
+                <p><input name="question_{{ record + 1 }}" type="text" value="{{content[record][1]}}" class="form-control"></p>
+                {% if content[record][2] != 'NULL'%}
+                    <img src="static/img_database/{{content[record][2]}}" alt="question image">
+                {% endif %}
+
+                <p>Відповіді</p>
+                <p><input name="answer_{{ record + 1 }}_1" type="text" value="{{content[record][3]}}" class="form-control"></p>
+                {% if content[record][9] != 'NULL'%}
+                    <img src="static/img_database/{{content[record][9]}}" alt="question image">
+                {% endif %}
+
+                <p><input name="answer_{{ record + 1 }}_2" type="text" value="{{content[record][4]}}" class="form-control"></p>
+                {% if content[record][10] != 'NULL'%}
+                    <img src="static/img_database/{{content[record][10]}}" alt="question image">
+                {% endif %}
+
+                <p><input name="answer_{{ record + 1 }}_3" type="text" value="{{content[record][5]}}" class="form-control"></p>
+                {% if content[record][11] != 'NULL'%}
+                    <img src="static/img_database/{{content[record][11]}}" alt="question image">
+                {% endif %}
+
+                <p><input name="answer_{{ record + 1 }}_4" type="text" value="{{content[record][6]}}" class="form-control"></p>
+                {% if content[record][12] != 'NULL'%}
+                    <img src="static/img_database/{{content[record][12]}}" alt="question image">
+                {% endif %}
+
+                <p><input name="answer_{{ record + 1 }}_5" type="text" value="{{content[record][7]}}" class="form-control"></p>
+                {% if content[record][13] != 'NULL'%}
+                    <img src="static/img_database/{{content[record][13]}}" alt="question image">
+                {% endif %}
+
+                <p><input name="answer_{{ record + 1 }}_6" type="text" value="{{content[record][8]}}" class="form-control"></p>
+                {% if content[record][14] != 'NULL'%}
+                    <img src="static/img_database/{{content[record][14]}}" alt="question image">
+                {% endif %}
+
+                <p><span>Відредаговано</span> <input type="checkbox" name="edited_checkbox" value="{{ record + 1 }}"></p>
+                <div class="button_centre"><input type="button" value="Видалити" onclick="remove_question(id='{{record + 1}}');" class="btn btn-danger"></div>
+                <input id="database_table_id_{{record + 1}}" name="database_table_id_{{record + 1}}" type="hidden" value="{{content[record][0]}}">
+                <hr>
+            </div>    
+
+        {% endfor %}
+
+        <input name="topic" type="hidden" value="{{ topic }}">
+        <input name="num_of_records" type="hidden" value="{{ num_of_records }}">
+        <input id="delete_question" name="delete_question" type="hidden" value="_">
+        <div class="button_centre"><input type="submit" value="Зберегти зміни" class="btn btn-primary"></div>
+
+    </form>
+</div>
+
+{% endblock %}
+
+{% block javascript %}<script src="/static/js/edit_test.js"></script>{% endblock %}

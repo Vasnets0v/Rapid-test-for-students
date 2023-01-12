@@ -52,6 +52,25 @@ def check_results():
     return render_template('check_results.html', topics=funcs.get_all_topics())
 
 
+@app.route('/select_test_to_edit', methods=['POST', 'GET'])
+@login_required
+def select_test_to_edit():
+    return render_template('select_test_to_edit.html', topics=funcs.get_all_topics())
+
+
+@app.route('/edit_test', methods=['POST', 'GET'])
+@login_required
+def edit_test():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        content = funcs.get_all_records_from_table(topic)
+        num_of_records = funcs.get_num_of_records_in_table(topic)
+        return render_template('edit_test.html', content=content, topic=topic, num_of_records=num_of_records)
+    else:
+        flash('Error')
+        return redirect('/')
+
+
 @app.route('/deletion_confirmation', methods=['POST', 'GET'])
 @login_required
 def deletion_confirmation():
@@ -87,6 +106,41 @@ def download_sheet():
         sheet.insert_user_data()
         name = sheet.file_name + '.xlsx'
         return send_file(name, as_attachment=True)
+    else:
+        flash('Error')
+        return redirect('/')
+
+
+@app.route('/handle_edit_test_page', methods=['POST'])
+@login_required
+def handle_edit_test_page():
+    if request.method == 'POST':
+        topic = request.form.get('topic')
+        num_of_question = request.form.get('num_of_records')
+        ids_edited_records = request.form.getlist('edited_checkbox')
+
+        # request return real index from database
+        index_deleted_records = request.form.get('delete_question').split('_')
+
+        for id in index_deleted_records:
+            sql_request.execute(f"DELETE FROM {topic} WHERE id = '{id}'")
+            db.commit()
+
+        for id in ids_edited_records:
+            table_id = request.form.get(f'database_table_id_{int(id)}')
+            question = request.form.get(f'question_{int(id)}')
+            answers = []
+
+            for answer in range(6):
+                answers.append(request.form.get(f'answer_{int(id)}_{answer + 1}'))
+
+            sql_request.execute(f"UPDATE {topic} SET question = '{question}', answer_1 = '{answers[0]}', answer_2 = '{answers[1]}',"
+                                f"answer_3 = '{answers[2]}', answer_4 = '{answers[3]}', answer_5 = '{answers[4]}'," 
+                                f"answer_6 = '{answers[5]}' WHERE id = '{table_id}' ")
+            db.commit()
+                
+        flash('Зміни збережено')
+        return redirect('/')
     else:
         flash('Error')
         return redirect('/')

@@ -1,0 +1,25 @@
+.wrapper{
+    margin-top: 3%;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 30px;
+    width: 80%;
+  }
+  
+  .button_centre {
+  text-align: center;
+  margin-top: 15px;
+  }
+
+span {
+  color: blue;
+}
+
+.topic_name {
+  color: orange;
+}
+
+h3, h4 {
+  text-align: center;
+}
+  

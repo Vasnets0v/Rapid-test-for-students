@@ -1,0 +1,11 @@
+.wrapper{
+    margin-top: 15%;
+    margin-right: auto;
+    margin-left: auto;
+    width: max-content;
+  }
+  
+  .button_centre {
+  text-align: center;
+  margin-top: 15px;
+  }
