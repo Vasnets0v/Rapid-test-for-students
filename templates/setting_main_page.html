@@ -1,0 +1,28 @@
+{% extends 'main_template.html' %}
+
+{% block style %}<link rel="stylesheet" href="static/css/setting_main_page.css">{% endblock %}
+
+{% block title %}Панель адміністратора{% endblock %}
+
+{% block content %}
+    <div class="wrapper">
+       <div class="row">
+            <div class="col">
+                <div class="user_setting">
+                    <h3>Керування користувачами</h3>
+                    <p></p>
+                    <p><i class="fa-solid fa-users"></i><a href="/new_user">Новий користувач</a></p>
+                    <p><i class="fa-solid fa-key"></i><a href="/change_password">Змінити пароль</a></p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="test_setting">
+                    <h3>Робота з тестами</h3>
+                    <p><i class="fa-solid fa-circle-plus"></i><a href="/select_topic">Створити новий тест або додати запитання</a></p>
+                    <p><i class="fa-solid fa-pencil"></i><a href="/select_test_to_edit">Редагувати запитання</a></p>
+                    <p><i class="fa-solid fa-sliders"></i><a href="/tests_settings">Налаштувати тести</a></p>
+                </div>
+            </div>
+       </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,40 @@
+.wrapper{
+    margin-top: 50px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 80%;
+}
+
+.test_setting, .user_setting {
+    background-color: azure;
+    padding: 10px;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+    font-size: 26px;
+}
+    
+a:link {
+    color: black;
+    text-decoration: none;
+    border: none;
+}
+    
+a:visited {
+    color: black;
+    text-decoration: none;
+    border: none;
+}
+    
+a:hover {
+    color: black;
+    text-decoration: none;
+    border: none;
+}
+
+i {
+    font-size: 20px;
+    padding-right: 10px;
+}

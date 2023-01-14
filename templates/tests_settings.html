@@ -1,0 +1,47 @@
+{% extends 'main_template.html' %}
+
+{% block style %}<link rel="stylesheet" href="static/css/tests_settings.css">{% endblock %}
+
+{% block title %}Конфігурація тестів{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="tests_settings">
+        <h3>Налаштування тестів</h3>
+        <p></p>
+        <div class="row">
+            {% for topic in topics %}
+                <div class="col-sm-5">
+                    <form action="/handle_setting_test_page" method="post">
+                        <p></p>
+                        <h5>{{ topic[1] }}</h5>
+                        <p>Час (хвилин):  <input name="time" type="text" value="{{ topic[2] }}" class="form-control"></p>
+                        <p>Питань: <input name="questions" type="text" value="{{ topic[4] }}" class="form-control"></p>
+                        <div class="status">Статус:
+                            <select name="status" id="" class="form-select">
+                                {% if topic[3] == 'closed' %}
+                                    <option class="close_topic" value="closed">Закрито</option>
+                                    <option class="open_topic" value="open">Відкрито</option>
+                                {% endif %}
+                                {% if topic[3] == 'open' %}
+                                    <option class="open_topic" value="open">Відкрито</option>
+                                    <option class="close_topic" value="closed">Закрито</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <input name="topic" type="hidden" value="{{ topic[1] }}">
+                        <div class="button_centre"><input type="submit" value="Зберегти" class="btn btn-primary"></div>
+                    </form>
+                    <form action="/remove_topic" method="post">
+                        <input class="delete_button" id="delete_button_{{ topic[0] }}" type="submit">
+                        <div class="button_centre"><input onclick="confirm_delete_topic(topic='{{ topic[1] }}', id='{{ topic[0] }}');" type="button" value="Видалити" class="btn btn-outline-danger btn-sm"></div>
+                        <input name="topic" type="hidden" value="{{ topic[1] }}">
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}<script src="/static/js/tests_settings.js"></script>{% endblock %}

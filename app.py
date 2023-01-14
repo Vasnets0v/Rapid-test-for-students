@@ -58,6 +58,30 @@ def select_test_to_edit():
     return render_template('select_test_to_edit.html', topics=funcs.get_all_topics())
 
 
+@app.route('/new_user', methods=['POST', 'GET'])
+@login_required
+def new_user():
+    return render_template('new_user.html')
+
+
+@app.route('/change_password', methods=['POST', 'GET'])
+@login_required
+def change_password():
+    return render_template('change_password.html')
+
+
+@app.route('/setting', methods=['POST', 'GET'])
+@login_required
+def setting():
+    return render_template('setting_main_page.html')
+
+
+@app.route('/tests_settings', methods=['POST', 'GET'])
+@login_required
+def tests_settings():
+    return render_template('tests_settings.html', topics=funcs.get_all_info_about_topics())
+
+
 @app.route('/edit_test', methods=['POST', 'GET'])
 @login_required
 def edit_test():
@@ -157,7 +181,7 @@ def remove_topic():
             sql_request.execute(f'DELETE FROM tests_info WHERE topic_title="{topic}"')
             db.commit()
             flash(f'Тема {topic} видалена')
-            return redirect('/admin_panel')
+            return redirect('/setting')
         else:
             flash('Відсутня тема')
             return redirect('/')
@@ -181,8 +205,8 @@ def score():
         return render_template('score.html', topic=topic, users=users)
 
 
-@app.route('/change_password', methods=['POST', 'GET'])
-def change_password():
+@app.route('/handle_change_password_page', methods=['POST', 'GET'])
+def handle_change_password_page():
     if request.method == 'POST':
         email = request.form.get('email')
         old_password = request.form.get('old_password')
@@ -199,19 +223,19 @@ def change_password():
                     db_alchemy.session.commit()
 
                     flash('Пароль успішно змінено')
-                    return redirect('/admin_panel')
+                    return redirect('/setting')
 
                 else:
                     flash('старий пароль не вірний')
-                    return redirect('/admin_panel')
+                    return redirect('/setting')
 
             else:
                 flash('користувача не знайдено')
-                return redirect('/admin_panel')
+                return redirect('/setting')
 
         else:
             flash('паролі не співпадають')
-            return redirect('/admin_panel')
+            return redirect('/setting')
 
 
 @app.route('/select_topic_for_student', methods=['POST', 'GET'])
@@ -232,9 +256,9 @@ def select_topic_for_student():
     return render_template('select_topic_for_student.html', topic=topic)
 
 
-@app.route('/admin_panel', methods=['POST', 'GET'])
+@app.route('/handle_new_user_page', methods=['POST', 'GET'])
 @login_required
-def admin_panel():
+def handle_new_user_page():
     if request.method == 'POST':
         if request.form['password'] == request.form['re_password']:
 
@@ -254,15 +278,18 @@ def admin_panel():
                 db_alchemy.session.commit()
 
                 flash('Користувача успішно додано')
+                return redirect('/setting')
         else:
             flash('Паролі не співпадають')
+            return redirect('/setting')
+    else:
+        flash('Error')
+        return redirect('/')
 
-    return render_template('admin_panel.html', topics=funcs.get_all_info_about_topics())
 
-
-@app.route('/setting_test', methods=['POST', 'GET'])
+@app.route('/handle_setting_test_page', methods=['POST', 'GET'])
 @login_required
-def setting_test():
+def handle_setting_test_page():
     if request.method == 'POST':
         topic = request.form.get('topic')
         time_to_pass = request.form.get('time')
@@ -274,14 +301,18 @@ def setting_test():
 
         if total_questions_in_topic is None or total_questions_in_topic[0] < int(questions):
             flash('Недостатньо питань в темі')
-            return redirect('/admin_panel')
+            return redirect('/setting')
 
         else:
             sql_request.execute(f"""UPDATE tests_info SET time_to_pass='{time_to_pass}', topic_status='{status}', 
                                 questions='{questions}' WHERE topic_title='{topic}'""")
             db.commit()
+            flash('Зміни збережено')
 
-        return redirect('/admin_panel')
+        return redirect('/setting')
+    else:
+        flash('Error')
+        return redirect('/')
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -294,7 +325,7 @@ def login_page():
         if user:
             if check_password_hash(user.password, password):
                 login_user(user)
-                return redirect('/admin_panel')
+                return redirect('/setting')
             else:
                 flash('Неправильний логін або пароль')
         else:

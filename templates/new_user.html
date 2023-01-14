@@ -1,0 +1,27 @@
+{% extends 'main_template.html' %}
+
+{% block style %}<link rel="stylesheet" href="static/css/new_user.css">{% endblock %}
+
+{% block title %}Додати нового користувача{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="registration">
+        <form action="handle_new_user_page" method="post">
+        <h5>Додати нового користувача</h5><p></p>
+        <p>Імя</p>
+        <input type="text" name="name" class="form-control" required><p></p>
+        <p>Прізвище</p>
+        <input type="text" name="surname" class="form-control" required><p></p>
+        <p>E-mail</p>
+        <input type="email" name="email" class="form-control" required><p></p>
+        <p>Пароль</p>
+        <input type="password" name="password" class="form-control" required><p></p>
+        <p>Повторити пароль</p>
+        <input type="password" name="re_password" class="form-control" required>
+        <p></p>
+        <div class="button_centre"><input type="submit" class="btn btn-primary" value="Зареєструвати"></div>
+        </form>
+    </div>
+</div>
+{% endblock %}
