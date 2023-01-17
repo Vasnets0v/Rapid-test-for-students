@@ -241,9 +241,9 @@ def handle_change_password_page():
 @app.route('/select_topic_for_student', methods=['POST', 'GET'])
 def select_topic_for_student():
     if request.method == 'POST':
-        topic = request.form.get('topic')
+        topic_id = request.form.get('topic_id')
         topic_status = sql_request.execute(f'SELECT topic_status FROM '
-                                           f'tests_info WHERE topic_title = "{topic}"').fetchone()
+                                           f'tests_info WHERE id = "{topic_id}"').fetchone()
 
         if topic_status[0] == "closed":
             flash('Тема закрита!')
@@ -253,7 +253,7 @@ def select_topic_for_student():
         flash('Недостатньо прав')
         return redirect('/')
 
-    return render_template('select_topic_for_student.html', topic=topic)
+    return render_template('select_topic_for_student.html', topic_id=topic_id)
 
 
 @app.route('/handle_new_user_page', methods=['POST', 'GET'])
@@ -291,7 +291,8 @@ def handle_new_user_page():
 @login_required
 def handle_setting_test_page():
     if request.method == 'POST':
-        topic = request.form.get('topic')
+        topic_id = request.form.get('topic_id')
+        topic = funcs.conver_topic_id_into_title(topic_id)
         time_to_pass = request.form.get('time')
         questions = request.form.get('questions')
         status = request.form.get('status')
@@ -337,17 +338,18 @@ def login_page():
 @app.route('/testing', methods=['POST', 'GET'])
 def testing():
 
-    topic = request.form.get('topic')
+    topic_id = request.form.get('topic_id')
+    topic = funcs.conver_topic_id_into_title(topic_id)
     student_name = request.form.get('student_name')
     group = request.form.get('group')
-    number_of_tests = sql_request.execute(f'SELECT questions FROM tests_info WHERE topic_title="{topic}"').fetchone()[0]
+    number_of_tests = sql_request.execute(f'SELECT questions FROM tests_info WHERE id="{topic_id}"').fetchone()[0]
 
     if number_of_tests == 0:
         flash('Питання відсутні')
         return redirect('/')
 
-    if topic and student_name and group:
-        content = funcs.get_content_from_db(number_of_tests, topic)
+    if topic_id and student_name and group:
+        content = funcs.get_content_from_db(number_of_tests, topic_id)
 
         test_ids = []
 

@@ -40,6 +40,34 @@ def get_all_records_from_table(topic):
     return content
 
 
+def conver_topic_id_into_title(id):
+    topic = sql_request.execute(f'SELECT topic_title FROM tests_info WHERE id = {id}').fetchone()[0]
+    
+    return topic
+
+
+def get_content_from_db(num_of_questions, topic_id):
+    topic = conver_topic_id_into_title(topic_id)
+    total_columns = sql_request.execute(f"SELECT count(*) FROM {topic}").fetchone()[0] + 1
+
+    random_ids = random.sample(range(1, total_columns), num_of_questions)
+    content = {}
+
+    for i in range(num_of_questions):
+        sql_request.execute(f"""SELECT question, img_question, answer_1, img_1, answer_2, img_2, answer_3, img_3, 
+        answer_4, img_4, answer_5, img_5, answer_6, img_6 FROM {topic} WHERE id = '{random_ids[i]}'""")
+
+        tuple_content = sql_request.fetchone()
+        array_content = []
+
+        for item in tuple_content:
+            array_content.append(item)
+
+        content[random_ids[i]] = array_content
+
+    return content
+
+
 def get_num_of_records_in_table(topic):
     num_of_records = sql_request.execute(f"SELECT COUNT('id') FROM {topic}")
 
@@ -93,33 +121,22 @@ def get_all_topics():
 
 
 def get_all_info_about_topics():
-    raw_content = sql_request.execute(f"SELECT * FROM tests_info")
+    raw_records = sql_request.execute(f"SELECT * FROM tests_info")
 
     content = []
 
-    for item in raw_content:
-        content.append(item)
+    for raw_row in raw_records:
+        row_records = []
+
+        for column in raw_row:
+            row_records.append(column)
+
+        content.append(row_records)
+
+    for row in range(len(content)):
+        word_array = content[row][1].split('_')
+        topic = ' '.join(map(str, word_array))
+        content[row][1] = topic
 
     return content
 
-
-def get_content_from_db(num_of_questions, topic):
-    sql_request.execute(f"SELECT count(*) FROM {topic}")
-    total_columns = sql_request.fetchone()[0] + 1
-
-    random_ids = random.sample(range(1, total_columns), num_of_questions)
-    content = {}
-
-    for i in range(num_of_questions):
-        sql_request.execute(f"""SELECT question, img_question, answer_1, img_1, answer_2, img_2, answer_3, img_3, 
-        answer_4, img_4, answer_5, img_5, answer_6, img_6 FROM {topic} WHERE id = '{random_ids[i]}'""")
-
-        tuple_content = sql_request.fetchone()
-        array_content = []
-
-        for item in tuple_content:
-            array_content.append(item)
-
-        content[random_ids[i]] = array_content
-
-    return content
