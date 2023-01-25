@@ -9,8 +9,8 @@
     <h5>Оберіть тест який хочете редагувати</h5>
     <form action="/edit_test" method="post">
         <select name="topic" class="form-select">
-            {% for topic in topics %}
-                <option value="{{ topic }}">{{ topic }}</option>
+            {% for topic in topic_dict %}
+                <option value="{{ topic }}">{{ topic_dict[topic] }}</option>
             {% endfor %}
         </select>
         <div class="button_centre"><input type="submit" value="Редагувати" class="btn btn-primary"></div>

@@ -32,10 +32,51 @@ class ExelSheet:
 
 def get_all_records_from_table(topic):
     raw_content = sql_request.execute(f"SELECT * FROM {topic}")
+    content = [item for item in raw_content]
+
+    return content
+
+
+def get_all_topics():
+    raw_topics = sql_request.execute(f"SELECT topic_title FROM tests_info")
+    topics = [topic[0] for topic in raw_topics]
+
+    return topics
+
+
+def get_all_info_about_topics():
+    raw_records = sql_request.execute(f"SELECT * FROM tests_info")
+
+    content = []
+    # The variable title contains place(index) where the name of the topic is stored in the array
+    title = 1
+
+    for raw_row in raw_records:
+        row_records = []
+
+        for column in raw_row:
+            row_records.append(column)
+
+        content.append(row_records)
+
+    for row in range(len(content)):
+        content[row][title] = get_clear_topic_name(content[row][title])
+
+    return content
+
+
+def get_clear_topic_name(topic):
+    word_array = topic.split('_')
+    clean_topic = ' '.join(map(str, word_array))
+    
+    return clean_topic
+
+
+def get_array_clear_topics(topics):
     content = []
 
-    for item in raw_content:
-        content.append(item)
+    for topic in topics:
+        content.append(get_clear_topic_name(topic))
 
     return content
 
@@ -46,7 +87,7 @@ def conver_topic_id_into_title(id):
     return topic
 
 
-def get_content_from_db(num_of_questions, topic_id):
+def get_question_from_db(num_of_questions, topic_id):
     topic = conver_topic_id_into_title(topic_id)
     total_columns = sql_request.execute(f"SELECT count(*) FROM {topic}").fetchone()[0] + 1
 
@@ -98,45 +139,3 @@ def process_user_result(correct_answers, user_answers):
     percentage_score = round((score * 100) / num_of_tests)
 
     return percentage_score
-
-
-def get_all_tables_from_db():
-    all_table_content = sql_request.execute("SELECT * FROM sqlite_master WHERE type='table'")
-    table_list = []
-
-    for i in all_table_content:
-        table_list.append(i[1])
-
-    return table_list
-
-
-def get_all_topics():
-    raw_topics = sql_request.execute(f"SELECT topic_title FROM tests_info")
-    topics = []
-
-    for topic in raw_topics:
-        topics.append(topic[0])
-
-    return topics
-
-
-def get_all_info_about_topics():
-    raw_records = sql_request.execute(f"SELECT * FROM tests_info")
-
-    content = []
-
-    for raw_row in raw_records:
-        row_records = []
-
-        for column in raw_row:
-            row_records.append(column)
-
-        content.append(row_records)
-
-    for row in range(len(content)):
-        word_array = content[row][1].split('_')
-        topic = ' '.join(map(str, word_array))
-        content[row][1] = topic
-
-    return content
-

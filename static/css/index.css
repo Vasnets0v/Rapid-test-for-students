@@ -34,10 +34,26 @@ color: green;
 display: inline;
 }
 
+@media screen and (max-width: 576px) {
+  .wrapper{
+    padding-right: 5%;
+    padding-left: 5%;
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .wrapper{
+    padding-right: 6%;
+    padding-left: 6%;
+    width: 80%;
+  }
+}
+
 @media screen and (max-width: 750px) {
-    .wrapper{
-      padding-right: 5%;
-      padding-left: 5%;
-      width: 80%;
-    }
+  .wrapper{
+    padding-right: 7%;
+    padding-left: 7%;
+    width: 80%;
+  }
 }

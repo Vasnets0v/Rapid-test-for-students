@@ -7,7 +7,7 @@
 {% block content %}
 <div class="wrapper">
     <form action="/download_sheet" method="post">
-        <h5>{{ topic }}</h5>
+        <h5>{{ clear_topic }}</h5>
         <div class="button_right"><input type="submit" value="Завантажити exel таблицю" class="btn btn-primary"></div>
         <input type="hidden" value="{{topic}}" name="topic">
     </form>

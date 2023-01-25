@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, flash, send_file
-import sys
 import sqlite3
 import os
 import time
@@ -49,13 +48,19 @@ def select_topic():
 
 @app.route('/check_results', methods=['POST', 'GET'])
 def check_results():
-    return render_template('check_results.html', topics=funcs.get_all_topics())
+    topics = funcs.get_all_topics()
+    clear_topics = funcs.get_array_clear_topics(topics)
+    topic_dict = dict(zip(topics, clear_topics))
+    return render_template('check_results.html', topic_dict=topic_dict)
 
 
 @app.route('/select_test_to_edit', methods=['POST', 'GET'])
 @login_required
 def select_test_to_edit():
-    return render_template('select_test_to_edit.html', topics=funcs.get_all_topics())
+    topics = funcs.get_all_topics()
+    clear_topics = funcs.get_array_clear_topics(topics)
+    topic_dict = dict(zip(topics, clear_topics))
+    return render_template('select_test_to_edit.html', topic_dict=topic_dict)
 
 
 @app.route('/new_user', methods=['POST', 'GET'])
@@ -194,15 +199,14 @@ def remove_topic():
 @app.route('/score', methods=['POST', 'GET'])
 def score():
     if request.method == 'POST':
+
         topic = request.form.get('topic')
+        clear_topic = funcs.get_clear_topic_name(topic)
         users_score = sql_request.execute(f"SELECT * FROM score_for_theme_{topic} order by id desc")
 
-        users = []
+        users = [user for user in users_score]
 
-        for user in users_score:
-            users.append(user)
-
-        return render_template('score.html', topic=topic, users=users)
+        return render_template('score.html', topic=topic, users=users, clear_topic=clear_topic)
 
 
 @app.route('/handle_change_password_page', methods=['POST', 'GET'])
@@ -349,13 +353,14 @@ def testing():
         return redirect('/')
 
     if topic_id and student_name and group:
-        content = funcs.get_content_from_db(number_of_tests, topic_id)
+        content = funcs.get_question_from_db(number_of_tests, topic_id)
 
         test_ids = []
 
         for i in content:
             test_ids.append(i)
 
+            #change numbers to variables
             if content[i][8] == 'NULL':
                 if content[i][9] == 'NULL':
                     content[i].append(funcs.get_mixed_order(3))
