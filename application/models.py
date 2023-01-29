@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from app import db_alchemy, sql_request
+from __init__ import db_alchemy, get_db
 
 
 class User(UserMixin, db_alchemy.Model):
@@ -12,6 +12,9 @@ class User(UserMixin, db_alchemy.Model):
 
 
 def table_for_new_topic(new_topic):
+    db = get_db()
+    sql_request = db.cursor()
+
     sql_request.execute(f"""
     CREATE TABLE IF NOT EXISTS {new_topic} (
         id integer PRIMARY KEY AUTOINCREMENT,
@@ -34,6 +37,9 @@ def table_for_new_topic(new_topic):
 
 
 def student_score(topic):
+    db = get_db()
+    sql_request = db.cursor()
+
     sql_request.execute(f"""
     CREATE TABLE IF NOT EXISTS score_for_theme_{topic} (
     id integer PRIMARY KEY AUTOINCREMENT,
@@ -46,6 +52,9 @@ def student_score(topic):
 
 # information about all exists tests
 def tests_info():
+    db = get_db()
+    sql_request = db.cursor()
+    
     sql_request.execute(f"""
     CREATE TABLE IF NOT EXISTS tests_info (
     id integer PRIMARY KEY AUTOINCREMENT,

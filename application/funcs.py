@@ -1,11 +1,11 @@
 import random
 import time
 from openpyxl import Workbook
-from app import sql_request
+from __init__ import get_db
 
 
 class ExelSheet:
-    def __init__(self, topic):
+    def __init__(self, topic, sql_request):
         self.file_name = str(topic) + ' ' + str(time.strftime("%d.%m.%Y"))
         self.wb = Workbook()
         self.ws = self.wb.active
@@ -31,21 +31,26 @@ class ExelSheet:
 
 
 def get_all_records_from_table(topic):
-    raw_content = sql_request.execute(f"SELECT * FROM {topic}")
+    db = get_db()
+    raw_content = db.cursor().execute(f"SELECT * FROM {topic}")
+
     content = [item for item in raw_content]
 
     return content
 
 
 def get_all_topics():
-    raw_topics = sql_request.execute(f"SELECT topic_title FROM tests_info")
+    db = get_db()
+    raw_topics = db.cursor().execute(f"SELECT topic_title FROM tests_info")
+
     topics = [topic[0] for topic in raw_topics]
 
     return topics
 
 
 def get_all_info_about_topics():
-    raw_records = sql_request.execute(f"SELECT * FROM tests_info")
+    db = get_db()
+    raw_records = db.cursor().execute(f"SELECT * FROM tests_info")
 
     content = []
     # The variable title contains place(index) where the name of the topic is stored in the array
@@ -82,13 +87,17 @@ def get_array_clear_topics(topics):
 
 
 def conver_topic_id_into_title(id):
-    topic = sql_request.execute(f'SELECT topic_title FROM tests_info WHERE id = {id}').fetchone()[0]
+    db = get_db()
+    topic = db.cursor().execute(f'SELECT topic_title FROM tests_info WHERE id = {id}').fetchone()[0]
     
     return topic
 
 
 def get_question_from_db(num_of_questions, topic_id):
     topic = conver_topic_id_into_title(topic_id)
+
+    db = get_db()
+    sql_request = db.cursor()
     total_columns = sql_request.execute(f"SELECT count(*) FROM {topic}").fetchone()[0] + 1
 
     random_ids = random.sample(range(1, total_columns), num_of_questions)
@@ -106,13 +115,15 @@ def get_question_from_db(num_of_questions, topic_id):
 
         content[random_ids[i]] = array_content
 
+
     return content
 
 
 def get_num_of_records_in_table(topic):
-    num_of_records = sql_request.execute(f"SELECT COUNT('id') FROM {topic}")
+    db = get_db()
+    num_of_records = db.cursor().execute(f"SELECT COUNT('id') FROM {topic}").fetchall()[0][0]
 
-    return num_of_records.fetchall()[0][0]
+    return num_of_records
 
 
 def get_mixed_order(answers):

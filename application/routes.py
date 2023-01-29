@@ -1,28 +1,12 @@
-from flask import Flask, render_template, request, redirect, flash, send_file
-import sqlite3
+from flask import render_template, request, redirect, flash, send_file
 import os
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_required, login_user
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.secret_key = 'secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///databases/login.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db_alchemy = SQLAlchemy(app)
-db = sqlite3.connect('databases/main_db.s3db', check_same_thread=False)
-sql_request = db.cursor()
-login_manager = LoginManager(app)
-
-main_app_path = os.path.dirname(os.path.abspath(__file__))
-databases_path = main_app_path + '/static/img_database'
-app.config["IMAGE_UPLOADS"] = databases_path
-
+from flask_login import login_required, login_user
 import models
 import funcs
 from funcs import ExelSheet
-
+from __init__ import app, login_manager, get_db, db_alchemy
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -116,9 +100,13 @@ def deletion_confirmation():
 def reset_score():
     if request.method == 'POST':
         topic = request.form.get('topic')
-        sql_request.execute(f'DROP TABLE score_for_theme_{topic}')
-        models.student_score(topic)
+
+        db = get_db()
+        db.cursor().execute(f'DROP TABLE score_for_theme_{topic}')
         db.commit()
+
+        models.student_score(topic)
+
         flash(f'Записи в таблиці {topic} видалені')
         return redirect('/')
     else:
@@ -130,8 +118,10 @@ def reset_score():
 @login_required
 def download_sheet():
     if request.method == 'POST':
+        db = get_db()
+        sql_request = db.cursor()
         topic = request.form.get('topic')
-        sheet = ExelSheet(topic)
+        sheet = ExelSheet(topic, sql_request)
         sheet.insert_user_data()
         name = sheet.file_name + '.xlsx'
         return send_file(name, as_attachment=True)
@@ -151,9 +141,10 @@ def handle_edit_test_page():
         # request return real index from database
         index_deleted_records = request.form.get('delete_question').split('_')
 
+        db = get_db()
+
         for id in index_deleted_records:
-            sql_request.execute(f"DELETE FROM {topic} WHERE id = '{id}'")
-            db.commit()
+            db.cursor().execute(f"DELETE FROM {topic} WHERE id = '{id}'")
 
         for id in ids_edited_records:
             table_id = request.form.get(f'database_table_id_{int(id)}')
@@ -163,10 +154,11 @@ def handle_edit_test_page():
             for answer in range(6):
                 answers.append(request.form.get(f'answer_{int(id)}_{answer + 1}'))
 
-            sql_request.execute(f"UPDATE {topic} SET question = '{question}', answer_1 = '{answers[0]}', answer_2 = '{answers[1]}',"
+            db.cursor().execute(f"UPDATE {topic} SET question = '{question}', answer_1 = '{answers[0]}', answer_2 = '{answers[1]}',"
                                 f"answer_3 = '{answers[2]}', answer_4 = '{answers[3]}', answer_5 = '{answers[4]}'," 
                                 f"answer_6 = '{answers[5]}' WHERE id = '{table_id}' ")
-            db.commit()
+
+        db.commit()
                 
         flash('Зміни збережено')
         return redirect('/')
@@ -181,10 +173,12 @@ def remove_topic():
         topic = request.form.get('topic')
 
         if topic:
-            sql_request.execute(f'DROP TABLE {topic}')
-            sql_request.execute(f'DROP TABLE score_for_theme_{topic}')
-            sql_request.execute(f'DELETE FROM tests_info WHERE topic_title="{topic}"')
+            db = get_db()
+            db.cursor().execute(f'DROP TABLE {topic}')
+            db.cursor().execute(f'DROP TABLE score_for_theme_{topic}')
+            db.cursor().execute(f'DELETE FROM tests_info WHERE topic_title="{topic}"')
             db.commit()
+
             flash(f'Тема {topic} видалена')
             return redirect('/setting')
         else:
@@ -202,7 +196,10 @@ def score():
 
         topic = request.form.get('topic')
         clear_topic = funcs.get_clear_topic_name(topic)
-        users_score = sql_request.execute(f"SELECT * FROM score_for_theme_{topic} order by id desc")
+
+        db = get_db()
+        users_score = db.cursor().execute(f"SELECT * FROM score_for_theme_{topic} order by id desc")
+        db.commit()
 
         users = [user for user in users_score]
 
@@ -246,8 +243,12 @@ def handle_change_password_page():
 def select_topic_for_student():
     if request.method == 'POST':
         topic_id = request.form.get('topic_id')
-        topic_status = sql_request.execute(f'SELECT topic_status FROM '
+
+        db = get_db()
+        topic_status = db.cursor().execute(f'SELECT topic_status FROM '
                                            f'tests_info WHERE id = "{topic_id}"').fetchone()
+        db.commit()
+        
 
         if topic_status[0] == "closed":
             flash('Тема закрита!')
@@ -301,17 +302,23 @@ def handle_setting_test_page():
         questions = request.form.get('questions')
         status = request.form.get('status')
 
-        total_questions_in_topic = sql_request.execute(f"SELECT * FROM {topic} WHERE "
+        db = get_db()
+        total_questions_in_topic = db.cursor().execute(f"SELECT * FROM {topic} WHERE "
                                                        f"id=(SELECT max(id) FROM {topic});").fetchone()
 
         if total_questions_in_topic is None or total_questions_in_topic[0] < int(questions):
             flash('Недостатньо питань в темі')
+
+            
+
             return redirect('/setting')
 
         else:
-            sql_request.execute(f"""UPDATE tests_info SET time_to_pass='{time_to_pass}', topic_status='{status}', 
+            db.cursor().execute(f"""UPDATE tests_info SET time_to_pass='{time_to_pass}', topic_status='{status}', 
                                 questions='{questions}' WHERE topic_title='{topic}'""")
             db.commit()
+            
+
             flash('Зміни збережено')
 
         return redirect('/setting')
@@ -346,7 +353,10 @@ def testing():
     topic = funcs.conver_topic_id_into_title(topic_id)
     student_name = request.form.get('student_name')
     group = request.form.get('group')
-    number_of_tests = sql_request.execute(f'SELECT questions FROM tests_info WHERE id="{topic_id}"').fetchone()[0]
+
+    db = get_db()
+    number_of_tests = db.cursor().execute(f'SELECT questions FROM tests_info WHERE id="{topic_id}"').fetchone()[0]
+    
 
     if number_of_tests == 0:
         flash('Питання відсутні')
@@ -397,8 +407,10 @@ def process_test():
         correct_answers = {}
         user_answers = {}
 
+        db = get_db()
+
         for test_id in test_ids:
-            answers_from_db = sql_request.execute(f'SELECT right_answer FROM {topic} WHERE id = {int(test_id)}')
+            answers_from_db = db.cursor().execute(f'SELECT right_answer FROM {topic} WHERE id = {int(test_id)}')
             correct_answers[test_id] = answers_from_db.fetchone()[0]
 
             user_answers[int(test_id)] = request.form.get(f'radio_{test_id}')
@@ -406,9 +418,11 @@ def process_test():
         result = funcs.process_user_result(correct_answers, user_answers)
         end_time = time.strftime("%d.%m.%Y %H:%M")
 
-        sql_request.execute(f"""INSERT INTO score_for_theme_{topic} (user_name, user_group, percentage_score, end_time)
+        db.cursor().execute(f"""INSERT INTO score_for_theme_{topic} (user_name, user_group, percentage_score, end_time)
                                 VALUES ('{user_name}', '{group}', '{result}', '{end_time}');""")
         db.commit()
+        
+
         flash("Ваш результат збережено")
 
     else:
@@ -464,7 +478,8 @@ def save_test():
             answers.append('NULL')
             img_answers.append('NULL')
 
-        sql_request.execute(f'INSERT INTO {topic} (question, answer_1, answer_2, answer_3, answer_4, answer_5, '
+        db = get_db()
+        db.cursor().execute(f'INSERT INTO {topic} (question, answer_1, answer_2, answer_3, answer_4, answer_5, '
                             f'answer_6, right_answer, img_1, img_2, img_3, img_4, img_5, img_6, img_question) '
                             f'VALUES ("{question}", "{answers[0]}", "{answers[1]}", "{answers[2]}", "{answers[3]}", '
                             f'"{answers[4]}", "{answers[5]}", "{correct_answer}", "{img_answers[0]}", '
@@ -488,10 +503,12 @@ def new_test():
             models.table_for_new_topic(new_topic)
             models.student_score(new_topic)
 
-            sql_request.execute(f""" INSERT INTO tests_info (topic_title, time_to_pass, topic_status, questions)
+            db = get_db()
+            db.cursor().execute(f""" INSERT INTO tests_info (topic_title, time_to_pass, topic_status, questions)
             VALUES ('{new_topic}', 0, 'closed', 0)""")
 
             db.commit()
+            
 
             return render_template('create_test.html', current_topic=new_topic)
         else:
@@ -505,7 +522,3 @@ def new_test():
     else:
         flash('У вас відсутні права для перегляду сторінки')
         return redirect('/')
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=1194)
