@@ -1,4 +1,6 @@
 venv/
-databases/*
+env/
+.idea/
+database/main_db.s3db
 application/static/img_database/*
 __pycache__/
