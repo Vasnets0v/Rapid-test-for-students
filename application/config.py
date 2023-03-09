@@ -10,4 +10,4 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///../database/admin.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # SQLite Settings
-DATABASE = './database/main_db.s3db'
+DATABASE = '../database/main_db.s3db'
