@@ -31,12 +31,13 @@ def create_db_and_base_table():
         sql_request = db.cursor()
 
         sql_request.execute(f"""
-        CREATE TABLE IF NOT EXISTS tests_info (
+        CREATE TABLE IF NOT EXISTS setting (
         id integer PRIMARY KEY AUTOINCREMENT,
         topic_title varchar(64),
         time_to_pass integer,
         topic_status varchar(64),
-        questions integer
+        questions integer,
+        priority integer
         );""")
 
         db.commit()
